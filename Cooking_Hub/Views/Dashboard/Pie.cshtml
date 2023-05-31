@@ -1,0 +1,95 @@
+﻿@*@using Cooking_Hub.Data;
+@using Microsoft.AspNetCore.Identity
+@inject UserManager<CookingHubUser> _userManager
+@using System.Linq
+@using System.Globalization
+@using Microsoft.EntityFrameworkCore;
+
+@{
+    var currentMonth = DateTime.Now.Month;
+    var currentYear = DateTime.Now.Year;
+
+    var users = await _userManager.Users
+        .Where(u => u.CreatedAt.Month == currentMonth && u.CreatedAt.Year == currentYear)
+        .ToListAsync();
+}
+
+@{
+    var calendar = CultureInfo.InvariantCulture.Calendar;
+
+    var userGroups = new List<dynamic>();
+    var currentMonthStartDate = new DateTime(currentYear, currentMonth, 1);
+    var currentMonthEndDate = currentMonthStartDate.AddMonths(1).AddDays(-1);
+
+    var totalWeeksInMonth = calendar.GetWeekOfYear(currentMonthEndDate, CalendarWeekRule.FirstDay, DayOfWeek.Sunday) -
+                            calendar.GetWeekOfYear(currentMonthStartDate, CalendarWeekRule.FirstDay, DayOfWeek.Sunday) + 1;
+
+    for (int week = 1; week <= totalWeeksInMonth; week++)
+    {
+        var weekStartDate = currentMonthStartDate.AddDays((week - 1) * 7);
+        var weekEndDate = weekStartDate.AddDays(6);
+        var userCount = users.Count(u => u.CreatedAt >= weekStartDate && u.CreatedAt <= weekEndDate);
+        userGroups.Add(new { Week = week, UserCount = userCount });
+    }
+}
+@{
+    var weekLabels = userGroups.Select(group => "Week " + group.Week).ToArray();
+    var userCounts = userGroups.Select(group => group.UserCount).ToArray();
+}
+*@
+<div class="container-full">
+	<!-- Main content -->
+	<section class="content">
+		<div class="row">
+            <div class="col-xxxl-7 col-xl-6 col-lg-6 col-12">
+				<div class="box">
+					<div class="box-body">
+						<div class="d-flex justify-content-between">
+							<div>
+								<h4 class="box-title mb-0">Daily Revenue</h4>
+								<p class="mb-0 text-mute">Lorem ipsum dolor</p>
+							</div>
+							<div class="text-end">
+								<h3 class="box-title mb-0 fw-700">$ 154K</h3>
+								<p class="mb-0"><span class="text-success">+ 1.5%</span> than last week</p>
+							</div>
+						</div>
+                        <div id="s" class="mt-20"><canvas id="userChart"></canvas></div>
+					</div>
+				</div>
+			</div>  
+        </div>
+    </section>
+</div>
+
+            
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+   
+    var ctx = document.getElementById('userChart').getContext('2d');
+    var userChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: @Html.Raw(Json.Serialize(ViewBag.weekLabels)),
+            datasets: [{
+                label: 'User ',
+                data: @Html.Raw(Json.Serialize(ViewBag.userCounts)),
+                backgroundColor: 'rgba(0, 123, 255, 0.5)',
+                borderColor: 'rgba(0, 123, 255, 1)',
+                borderWidth: 1,
+                pointRadius: 3,
+                pointBackgroundColor: 'rgba(0, 123, 255, 1)'
+            }]
+        },
+        options: {
+            responsive: true,
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    stepSize: 1
+                }
+            }
+        }
+    });
+</script>

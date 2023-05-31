@@ -1,0 +1,12 @@
+
+.wrapper-chartdash {
+    position: absolute;
+    top: 55%;
+    left: 45%;
+    -webkit-transform: translate(-50%, -50%);
+    transform: translate(-50%, -50%);
+}
+
+.hidden-sectionbtn {
+    display: none;
+}

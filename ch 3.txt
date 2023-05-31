@@ -1,0 +1,87 @@
+
+CREATE TABLE [dbo].[Contact](
+	[ContactId][nvarchar](450) NOT NULL,
+	[ContactName] [varchar](50) NOT NULL,
+	[ContactEmail] [varchar](50) NOT NULL,
+	[ContactMessage] [varchar](max) NOT NULL,
+	[CreatedAt] [datetime] NOT NULL,
+	[ContactSubject] [varchar](100) NOT NULL)
+
+CREATE TABLE [dbo].[AboutUs](
+	[AboutId][nvarchar](450) NOT NULL,
+	[AboutTitle] [varchar](100) NOT NULL,
+	[AboutusContents] [varchar](max) NOT NULL,
+	[CreatedAt] [datetime] NOT NULL,
+	[UpdatedAt] [datetime] NULL)
+
+
+
+CREATE TABLE [dbo].[Category](
+	[CategoryId] [nvarchar](450) NOT NULL,
+	[CategoryName] [varchar](50) NOT NULL,
+	[CategoryIsActive] [bit] NULL,
+	[CategoryImage] [nvarchar](max) NULL)
+
+CREATE TABLE Cuisines (
+    CuisineId  [nvarchar](450) NOT NULL PRIMARY KEY,
+    CuisineName NVARCHAR(100) NOT NULL
+);
+
+
+CREATE TABLE [dbo].[Blog](
+	[BlogId] [nvarchar](450) NOT NULL,
+	[CategoryId] [nvarchar](450) NOT NULL,
+	[UserId] [nvarchar](450) NOT NULL,
+	[BlogTitle] [varchar](255) NOT NULL,
+	[BlogContents] [varchar](max) NOT NULL,
+	[BlogImage] [nvarchar](max) NULL,
+	[BlogIsActive] [bit] NOT NULL,
+	[CreatedAt] [datetime] NULL,
+	[UpdatedAt] [datetime] NULL)
+
+CREATE TABLE [dbo].[BlogComment](
+	[CommentId] [nvarchar](450) NOT NULL,
+	[ParentId] [nvarchar](450) NULL,
+	[UserId] [nvarchar](450) NOT NULL,
+	[BlogId] [nvarchar](450) NOT NULL,
+	[BCommentContents] [varchar](500) NULL,
+	[CreatedAt] [datetime] NULL)
+
+CREATE TABLE [dbo].[BlogLike](
+	[LikeID] [nvarchar](450) NOT NULL,
+	[UserId] [nvarchar](450) NOT NULL,
+	[BlogId] [nvarchar](450) NOT NULL)
+
+CREATE TABLE [dbo].[Recipe](
+	[RecipeId]  [nvarchar](450) NOT NULL PRIMARY KEY,
+	[UserId] [nvarchar](450) NOT NULL,
+	[CategoryId] [nvarchar](450) NOT NULL,
+	[RecipeTitle] [varchar](255) NOT NULL,
+	[CuisineId] [nvarchar](450) NOT NULL,
+	[RecipeDescription] [varchar](max) NULL,
+	[PreparationTime] [time](7) NULL,
+	[CookingTime] [time](7) NULL,
+	[Serving] [int] NULL,
+	[Views] [int] NULL,
+	[Ingridients] [varchar](max) NULL,
+	[Nutrition] [varchar](max) NULL,
+	[RecipeImage] [varchar](255) NULL,
+	[IsActive] [bit] NULL,
+	[CreatedAt] [datetime] NULL,
+	[UpdatedAt] [datetime] NULL)
+
+
+CREATE TABLE [dbo].[RecipeLike](
+	[RecipeLikeId] [nvarchar](450) NOT NULL PRIMARY KEY,
+	[UserId] [nvarchar](450) NOT NULL,
+	[RecipeId][nvarchar](450) NOT NULL,
+	[LikedAt] [datetime] NOT NULL)
+
+CREATE TABLE [dbo].[RecipeReview](
+	[ReviewId] [nvarchar](450) NOT NULL PRIMARY KEY,
+	[UserId] [nvarchar](450) NOT NULL,
+	[RecipeId][nvarchar](450) NOT NULL,
+	[Rating] [int] NULL,
+	[ReviewContents] [varchar](500) NULL,
+	[CreatedAt] [datetime] NULL)
+

@@ -1,0 +1,989 @@
+﻿@using Cooking_Hub.Data;
+@using Microsoft.AspNetCore.Identity
+@inject SignInManager<CookingHubUser> SignInManager
+@inject UserManager<CookingHubUser> UserManager
+
+
+@if (User.Identity.IsAuthenticated && User.IsInRole("Admin"))
+{
+
+	<!DOCTYPE html>
+	<html lang="en">
+
+	<head>
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<meta name="description" content="">
+		<meta name="author" content="">
+		<link rel="icon" href="https://riday-admin-template.multipurposethemes.com/bs5/images/favicon.ico">
+
+		<title>Cooking Hub Admin </title>
+		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+		<!-- Vendors Style-->
+        <link href="~/admin/main/css/modify.css" rel="stylesheet" />
+        <link href="~/admin/main/css/vendors_css.css" rel="stylesheet" />
+        <!-- Style-->
+        <link href="~/admin/main/css/style.css" rel="stylesheet" />
+        <link href="~/admin/main/css/skin_color.css" rel="stylesheet" />
+		
+
+
+	</head>
+	<body class="hold-transition light-skin sidebar-mini theme-primary fixed">
+
+		<div class="wrapper">
+			<div id="loader"></div>
+
+			<header class="main-header" style="width: 100%;">
+				<div class="d-flex align-items-center logo-box justify-content-start">
+					<a href="#" class="waves-effect waves-light nav-link d-none d-md-inline-block mx-10 push-btn bg-transparent hover-primary" data-toggle="push-menu" role="button">
+						<span class="icon-Align-left"><span class="path1"></span><span class="path2"></span><span class="path3"></span></span>
+					</a>
+					<!-- Logo -->
+					<a asp-controller="Dashboard" asp-action="Index" class="logo">
+						<!-- logo-->
+						<div class="logo-lg">
+							<span  class="light-logo"><img src="~/logo black.png" alt="logo"></span>
+							<span asp-controller="Dashboard" asp-action="Index" class="dark-logo"><img src="~/logo white.png" alt="logo"></span>
+						</div>
+					</a>
+				</div>
+				<!-- Header Navbar -->
+				<nav class="navbar navbar-static-top">
+					<!-- Sidebar toggle button-->
+					<div class="app-menu">
+						<ul class="header-megamenu nav">
+							<li class="btn-group nav-item d-md-none">
+								<a href="#" class="waves-effect waves-light nav-link push-btn btn-info-light" data-toggle="push-menu" role="button">
+									<span class="icon-Align-left"><span class="path1"></span><span class="path2"></span><span class="path3"></span></span>
+								</a>
+							</li>
+							<li class="btn-group nav-item d-none d-xl-inline-block">
+								<div class="app-menu">
+									<div class="search-bx mx-5">
+										<form>
+											<div class="input-group">
+												<input type="search" class="form-control" placeholder="Search" aria-label="Search" aria-describedby="button-addon2">
+												<div class="input-group-append">
+													<button class="btn" type="submit" id="button-addon3"><i class="ti-search"></i></button>
+												</div>
+											</div>
+										</form>
+									</div>
+								</div>
+							</li>
+							@if (ViewBag.ShowFilter != null  && ViewContext.RouteData.Values["controller"].ToString().Equals("AdminUsers"))
+							
+							{
+
+								<li><a class="btn btn-outline-primary" href="#AllUser">All User</a></li>
+								<li><a class="btn btn-outline-success" href="#activeuser">ActiveUser</a></li>
+								<li><a class="btn btn-outline-danger" href="#inactiveuser">In ActiveUser </a></li>
+							
+							}
+							
+
+						</ul>
+					</div>
+
+
+					<div class="navbar-custom-menu r-side">
+						<ul class="nav navbar-nav">
+							<li class="btn-group nav-item d-lg-inline-flex d-none">
+								<a href="#" data-provide="fullscreen" class="waves-effect waves-light nav-link full-screen btn-info-light" title="Full Screen">
+									<i class="icon-Expand-arrows"><span class="path1"></span><span class="path2"></span></i>
+								</a>
+							</li>
+							<!-- Notifications -->
+							<!-- Messages -->
+							<!-- Control Sidebar Toggle Button -->
+							<!-- Right Sidebar Toggle Button -->
+							<li class="btn-group nav-item d-xl-none d-inline-flex">
+								<a href="#" class="push-btn right-bar-btn waves-effect waves-light nav-link full-screen btn-info-light">
+									<span class="icon-Layout-left-panel-1"><span class="path1"></span><span class="path2"></span></span>
+								</a>
+							</li>
+							<!-- User Account-->
+							<li class="dropdown user user-menu">
+								<a href="#" class="dropdown-toggle p-0 text-dark hover-primary ms-md-30 ms-10" data-bs-toggle="dropdown" title="User">
+									<span class="ps-30 d-md-inline-block d-none">Hello,</span> <strong class="d-md-inline-block d-none">Admin</strong><img src="~/Admin/images/avatar/avatar-11.png" class="user-image rounded-circle avatar bg-white mx-10" alt="User Image">
+								</a>
+								<ul class="dropdown-menu animated flipInX">
+									<li class="user-body">
+										<a class="dropdown-item" href="#"><i class="ti-user text-muted me-2"></i> Profile</a>
+										<div class="dropdown-divider"></div>
+										<form style="display:none"  asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Action("Index", "Home", new { area = "" })">
+											<button type="submit" class="dropdown-item"><i class="ti-lock text-muted me-2"></i> Logout</button>
+										</form>
+										<a class="dropdown-item" href="#" onclick="logout()"><i class="ti-lock text-muted me-2"></i> Logout</a>
+										
+									</li>
+								</ul>
+							</li>
+
+						</ul>
+					</div>
+				</nav>
+			</header>
+
+			<!-- Left side column. contains the logo and sidebar -->
+			<aside class="main-sidebar">
+				<!-- sidebar-->
+				<section class="sidebar position-relative">
+					<div class="multinav">
+						<div class="multinav-scroll" style="height: 100%;">
+							<!-- sidebar menu-->
+							<ul class="sidebar-menu" data-widget="tree">
+								<li >
+									<a asp-controller="Dashboard" asp-action="Index">
+										<i class="icon-Home"></i>
+										<span>Dashboard</span>
+										<span class="pull-right-container">
+											<i class="fa fa-angle-right pull-right"></i>
+										</span>
+									</a>
+									
+								</li>
+								<li class="treeview">
+									<a href="#">
+										<i class="icon-Clipboard-check"><span class="path1"></span><span class="path2"></span><span class="path3"></span></i>
+										<span>Order</span>
+										<span class="pull-right-container">
+											<i class="fa fa-angle-right pull-right"></i>
+										</span>
+									</a>
+									<ul class="treeview-menu">
+										<li><a href="order.html"><i class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>Order List</a></li>
+										<li><a href="order_details.html"><i class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>Order Details</a></li>
+									</ul>
+								</li>
+								<li class="treeview">
+									<a href="#">
+										<i class="icon-Dinner"><span class="path1"></span><span class="path2"></span><span class="path3"></span><span class="path4"></span><span class="path5"></span></i>
+										<span>Menus</span>
+										<span class="pull-right-container">
+											<i class="fa fa-angle-right pull-right"></i>
+										</span>
+									</a>
+									<ul class="treeview-menu">
+										<li><a href="add_new_menu.html"><i class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>Add New Menu</a></li>
+										<li><a href="menu_list.html"><i class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>Menu List</a></li>
+										<li><a href="menu_categories.html"><i class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>Categories</a></li>
+									</ul>
+								</li>
+								<li>
+									<a asp-controller="AdminUsers" asp-action="Index">
+										<i class="icon-Group"><span class="path1"></span><span class="path2"></span></i>
+										<span>Users</span>
+										<span class="pull-right-container">
+											<i class="fa fa-angle-right pull-right"></i>
+										</span>
+									</a>
+								</li>
+								<li>
+									<a href="analysis.html">
+										<i class="icon-Chart-line"><span class="path1"></span><span class="path2"></span></i>
+										<span>Analysis</span>
+									</a>
+								</li>
+								<li class="treeview">
+									<a href="#">
+										<i class="icon-Cart"><span class="path1"></span><span class="path2"></span></i>
+										<span>Online Store</span>
+										<span class="pull-right-container">
+											<i class="fa fa-angle-right pull-right"></i>
+										</span>
+									</a>
+									<ul class="treeview-menu">
+										<li><a href="ecommerce_products.html"><i class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>Products</a></li>
+										<li><a href="ecommerce_cart.html"><i class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>Products Cart</a></li>
+										<li><a href="ecommerce_products_edit.html"><i class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>Products Edit</a></li>
+										<li><a href="ecommerce_details.html"><i class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>Product Details</a></li>
+										<li><a href="ecommerce_orders.html"><i class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>Product Orders</a></li>
+										<li><a href="ecommerce_checkout.html"><i class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>Products Checkout</a></li>
+										<li><a href="invoice.html"><i class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>Invoice</a></li>
+										<li><a href="invoicelist.html"><i class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>Invoice List</a></li>
+									</ul>
+								</li>
+								<li class="header">UI & Pages</li>
+								<li class="treeview">
+									<a href="#">
+										<i class="icon-Library"><span class="path1"></span><span class="path2"></span></i>
+										<span>Collections</span>
+										<span class="pull-right-container">
+											<i class="fa fa-angle-right pull-right"></i>
+										</span>
+									</a>
+									<ul class="treeview-menu">
+										<li><a href="mailbox.html"><i class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>Mailbox</a></li>
+										<li class="treeview">
+											<a href="#">
+												<i class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>Widgets
+												<span class="pull-right-container">
+													<i class="fa fa-angle-right pull-right"></i>
+												</span>
+											</a>
+											<ul class="treeview-menu">
+												<li><a href="widgets_blog.html"><i class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>Blog</a></li>
+												<li><a href="widgets_chart.html"><i class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>Chart</a></li>
+												<li><a href="widgets_list.html"><i class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>List</a></li>
+												<li><a href="widgets_social.html"><i class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>Social</a></li>
+												<li><a href="widgets_statistic.html"><i class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>Statistic</a></li>
+												<li><a href="widgets_weather.html"><i class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>Weather</a></li>
+												<li><a href="widgets.html"><i class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>Widgets</a></li>
+											</ul>
+										</li>
+										<li class="treeview">
+											<a href="#">
+												<i class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>Modals
+												<span class="pull-right-container">
+													<i class="fa fa-angle-right pull-right"></i>
+												</span>
+											</a>
+											<ul class="treeview-menu">
+												<li><a href="component_modals.html"><i class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>Modals</a></li>
+												<li><a href="component_sweatalert.html"><i class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>Sweet Alert</a></li>
+												<li><a href="component_notification.html"><i class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>Toastr</a></li>
+											</ul>
+										</li>
+										<li class="treeview">
+											<a href="#">
+												<i class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>Apps
+												<span class="pull-right-container">
+													<i class="fa fa-angle-right pull-right"></i>
+												</span>
+											</a>
+											<ul class="treeview-menu">
+												<li><a href="extra_calendar.html"><i class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>Calendar</a></li>
+												<li><a href="contact_app.html"><i class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>Contact List</a></li>
+												<li><a href="contact_app_chat.html"><i class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>Chat</a></li>
+												<li><a href="extra_taskboard.html"><i class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>Todo</a></li>
+											</ul>
+										</li>
+										<li><a href="email_index.html"><i class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>Emails</a></li>
+									</ul>
+								</li>
+								<li class="treeview">
+									<a href="#">
+										<i class="icon-Brush"><span class="path1"></span><span class="path2"></span></i>
+										<span>UI & Components</span>
+										<span class="pull-right-container">
+											<i class="fa fa-angle-right pull-right"></i>
+										</span>
+									</a>
+									<ul class="treeview-menu">
+										<li class="treeview">
+											<a href="#">
+												<i class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>Components
+												<span class="pull-right-container">
+													<i class="fa fa-angle-right pull-right"></i>
+												</span>
+											</a>
+											<ul class="treeview-menu">
+												<li><a href="component_bootstrap_switch.html"><i class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>Bootstrap Switch</a></li>
+												<li><a href="component_date_paginator.html"><i class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>Date Paginator</a></li>
+												<li><a href="component_media_advanced.html"><i class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>Advanced Medias</a></li>
+												<li><a href="component_rangeslider.html"><i class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>Range Slider</a></li>
+												<li><a href="component_rating.html"><i class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>Ratings</a></li>
+												<li><a href="component_animations.html"><i class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>Animations</a></li>
+												<li><a href="extension_fullscreen.html"><i class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>Fullscreen</a></li>
+												<li><a href="extension_pace.html"><i class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>Pace</a></li>
+												<li><a href="component_nestable.html"><i class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>Nestable</a></li>
+												<li><a href="component_portlet_draggable.html"><i class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>Draggable Portlets</a></li>
+											</ul>
+										</li>
+										<li class="treeview">
+											<a href="#">
+												<i class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>Utilities
+												<span class="pull-right-container">
+													<i class="fa fa-angle-right pull-right"></i>
+												</span>
+											</a>
+											<ul class="treeview-menu">
+												<li><a href="ui_grid.html"><i class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>Grid System</a></li>
+												<li><a href="box_cards.html"><i class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>User Card</a></li>
+												<li><a href="box_advanced.html"><i class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>Advanced Card</a></li>
+												<li><a href="box_basic.html"><i class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>Basic Card</a></li>
+												<li><a href="box_color.html"><i class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>Card Color</a></li>
+												<li><a href="box_group.html"><i class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>Card Group</a></li>
+												<li><a href="ui_badges.html"><i class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>Badges</a></li>
+												<li><a href="ui_border_utilities.html"><i class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>Border</a></li>
+												<li><a href="ui_buttons.html"><i class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>Buttons</a></li>
+												<li><a href="ui_color_utilities.html"><i class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>Color</a></li>
+												<li><a href="ui_dropdown.html"><i class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>Dropdown</a></li>
+												<li><a href="ui_dropdown_grid.html"><i class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>Dropdown Grid</a></li>
+												<li><a href="ui_progress_bars.html"><i class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>Progress Bars</a></li>
+											</ul>
+										</li>
+										<li class="treeview">
+											<a href="#">
+												<i class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>Icons
+												<span class="pull-right-container">
+													<i class="fa fa-angle-right pull-right"></i>
+												</span>
+											</a>
+											<ul class="treeview-menu">
+												<li><a href="icons_fontawesome.html"><i class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>Font Awesome</a></li>
+												<li><a href="icons_glyphicons.html"><i class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>Glyphicons</a></li>
+												<li><a href="icons_material.html"><i class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>Material Icons</a></li>
+												<li><a href="icons_themify.html"><i class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>Themify Icons</a></li>
+												<li><a href="icons_simpleline.html"><i class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>Simple Line Icons</a></li>
+												<li><a href="icons_cryptocoins.html"><i class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>Cryptocoins Icons</a></li>
+												<li><a href="icons_flag.html"><i class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>Flag Icons</a></li>
+												<li><a href="icons_weather.html"><i class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>Weather Icons</a></li>
+											</ul>
+										</li>
+										<li class="treeview">
+											<a href="#">
+												<i class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>Elements
+												<span class="pull-right-container">
+													<i class="fa fa-angle-right pull-right"></i>
+												</span>
+											</a>
+											<ul class="treeview-menu">
+												<li><a href="ui_ribbons.html"><i class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>Ribbons</a></li>
+												<li><a href="ui_sliders.html"><i class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>Sliders</a></li>
+												<li><a href="ui_typography.html"><i class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>Typography</a></li>
+												<li><a href="ui_tab.html"><i class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>Tabs</a></li>
+												<li><a href="ui_timeline.html"><i class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>Timeline</a></li>
+												<li><a href="ui_timeline_horizontal.html"><i class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>Horizontal Timeline</a></li>
+											</ul>
+										</li>
+									</ul>
+								</li>
+								<li class="treeview">
+									<a href="#">
+										<i class="icon-File"><span class="path1"></span><span class="path2"></span><span class="path3"></span></i>
+										<span>Forms & Tables</span>
+										<span class="pull-right-container">
+											<i class="fa fa-angle-right pull-right"></i>
+										</span>
+									</a>
+									<ul class="treeview-menu">
+										<li class="treeview">
+											<a href="#">
+												<i class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>Forms
+												<span class="pull-right-container">
+													<i class="fa fa-angle-right pull-right"></i>
+												</span>
+											</a>
+											<ul class="treeview-menu">
+												<li><a href="forms_advanced.html"><i class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>Form Elements</a></li>
+												<li><a href="forms_general.html"><i class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>Form Layout</a></li>
+												<li><a href="forms_wizard.html"><i class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>Form Wizard</a></li>
+												<li><a href="forms_validation.html"><i class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>Form Validation</a></li>
+												<li><a href="forms_mask.html"><i class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>Formatter</a></li>
+												<li><a href="forms_xeditable.html"><i class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>Xeditable Editor</a></li>
+												<li><a href="forms_dropzone.html"><i class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>Dropzone</a></li>
+												<li><a href="forms_code_editor.html"><i class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>Code Editor</a></li>
+												<li><a href="forms_editors.html"><i class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>Editor</a></li>
+												<li><a href="forms_editor_markdown.html"><i class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>Markdown</a></li>
+											</ul>
+										</li>
+										<li class="treeview">
+											<a href="#">
+												<i class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>Tables
+												<span class="pull-right-container">
+													<i class="fa fa-angle-right pull-right"></i>
+												</span>
+											</a>
+											<ul class="treeview-menu">
+												<li><a href="tables_simple.html"><i class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>Simple tables</a></li>
+												<li><a href="tables_data.html"><i class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>Data tables</a></li>
+												<li><a href="tables_editable.html"><i class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>Editable Tables</a></li>
+												<li><a href="tables_color.html"><i class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>Table Color</a></li>
+											</ul>
+										</li>
+									</ul>
+								</li>
+								<li class="treeview">
+									<a href="#">
+										<i class="icon-Chart-pie"><span class="path1"></span><span class="path2"></span></i>
+										<span>Charts & Maps</span>
+										<span class="pull-right-container">
+											<i class="fa fa-angle-right pull-right"></i>
+										</span>
+									</a>
+									<ul class="treeview-menu">
+										<li class="treeview">
+											<a href="#">
+												<i class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>Charts
+												<span class="pull-right-container">
+													<i class="fa fa-angle-right pull-right"></i>
+												</span>
+											</a>
+											<ul class="treeview-menu">
+												<li><a href="charts_chartjs.html"><i class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>ChartJS</a></li>
+												<li><a href="charts_flot.html"><i class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>Flot</a></li>
+												<li><a href="charts_inline.html"><i class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>Inline charts</a></li>
+												<li><a href="charts_morris.html"><i class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>Morris</a></li>
+												<li><a href="charts_peity.html"><i class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>Peity</a></li>
+												<li><a href="charts_chartist.html"><i class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>Chartist</a></li>
+												<li><a href="charts_c3_axis.html"><i class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>Axis Chart</a></li>
+												<li><a href="charts_c3_bar.html"><i class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>Bar Chart</a></li>
+												<li><a href="charts_c3_data.html"><i class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>Data Chart</a></li>
+												<li><a href="charts_c3_line.html"><i class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>Line Chart</a></li>
+												<li><a href="charts_echarts_basic.html"><i class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>Basic Charts</a></li>
+												<li><a href="charts_echarts_bar.html"><i class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>Bar Chart</a></li>
+												<li><a href="charts_echarts_pie_doughnut.html"><i class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>Pie & Doughnut Chart</a></li>
+											</ul>
+										</li>
+										<li class="treeview">
+											<a href="#">
+												<i class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>Maps
+												<span class="pull-right-container">
+													<i class="fa fa-angle-right pull-right"></i>
+												</span>
+											</a>
+											<ul class="treeview-menu">
+												<li><a href="map_google.html"><i class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>Google Map</a></li>
+												<li><a href="map_vector.html"><i class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>Vector Map</a></li>
+											</ul>
+										</li>
+									</ul>
+								</li>
+								<li class="treeview">
+									<a href="#">
+										<i class="icon-Chat-locked"><span class="path1"></span><span class="path2"></span></i>
+										<span>Authentication</span>
+										<span class="pull-right-container">
+											<i class="fa fa-angle-right pull-right"></i>
+										</span>
+									</a>
+									<ul class="treeview-menu">
+										<li><a href="auth_login.html"><i class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>Login</a></li>
+										<li><a href="auth_register.html"><i class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>Register</a></li>
+										<li><a href="auth_lockscreen.html"><i class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>Lockscreen</a></li>
+										<li><a href="auth_user_pass.html"><i class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>Recover password</a></li>
+									</ul>
+								</li>
+								<li class="treeview">
+									<a href="#">
+										<i class="icon-Chat-check"><span class="path1"></span><span class="path2"></span></i>
+										<span>Miscellaneous</span>
+										<span class="pull-right-container">
+											<i class="fa fa-angle-right pull-right"></i>
+										</span>
+									</a>
+									<ul class="treeview-menu">
+										<li><a href="error_404.html"><i class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>Error 404</a></li>
+										<li><a href="error_500.html"><i class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>Error 500</a></li>
+										<li><a href="error_maintenance.html"><i class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>Maintenance</a></li>
+									</ul>
+								</li>
+								<li class="treeview">
+									<a href="#">
+										<i class="icon-User"><span class="path1"></span><span class="path2"></span></i>
+										<span>Usefull Page</span>
+										<span class="pull-right-container">
+											<i class="fa fa-angle-right pull-right"></i>
+										</span>
+									</a>
+									<ul class="treeview-menu">
+										<li><a href="extra_app_ticket.html"><i class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>Support Ticket</a></li>
+										<li><a href="extra_profile.html"><i class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>User Profile</a></li>
+										<li><a href="contact_userlist_grid.html"><i class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>Userlist Grid</a></li>
+										<li><a href="contact_userlist.html"><i class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>Userlist</a></li>
+										<li><a href="sample_faq.html"><i class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>FAQs</a></li>
+									</ul>
+								</li>
+								<li class="treeview">
+									<a href="#">
+										<i class="icon-Clipboard"><span class="path1"></span><span class="path2"></span><span class="path3"></span><span class="path4"></span></i>
+										<span>Extra Pages</span>
+										<span class="pull-right-container">
+											<i class="fa fa-angle-right pull-right"></i>
+										</span>
+									</a>
+									<ul class="treeview-menu">
+										<li><a href="sample_blank.html"><i class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>Blank</a></li>
+										<li><a href="sample_coming_soon.html"><i class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>Coming Soon</a></li>
+										<li><a href="sample_custom_scroll.html"><i class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>Custom Scrolls</a></li>
+										<li><a href="sample_gallery.html"><i class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>Gallery</a></li>
+										<li><a href="sample_lightbox.html"><i class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>Lightbox Popup</a></li>
+										<li><a href="sample_pricing.html"><i class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>Pricing</a></li>
+									</ul>
+								</li>
+							</ul>
+
+							<div class="sidebar-widgets">
+
+								<div class="copyright text-start m-25">
+									<p><strong class="d-block">Cooking Hub Admin Dashboard</strong> © 2021 All Rights Reserved</p>
+								</div>
+							</div>
+						</div>
+					</div>
+				</section>
+			</aside>
+
+			<!-- Content Wrapper. Contains page content -->
+			<div class="content-wrapper" style="width: 78%">
+				
+					@RenderBody()
+					
+			</div>
+			<!-- /.content-wrapper -->
+
+
+
+			<footer class="main-footer">
+				<div class="pull-right d-none d-sm-inline-block">
+					<ul class="nav nav-primary nav-dotted nav-dot-separated justify-content-center justify-content-md-end">
+						<li class="nav-item">
+
+						</li>
+						<li class="nav-item">
+
+						</li>
+					</ul>
+				</div>
+				&copy; 2023 <a href="">Cooking Hub </a>. All Rights Reserved.
+			</footer>
+			<!-- Control Sidebar -->
+			<!-- /.control-sidebar -->
+			<!-- Add the sidebar's background. This div must be placed immediately after the control sidebar -->
+			<div class="control-sidebar-bg"></div>
+		</div>
+		<!-- ./wrapper -->
+		<!-- ./side demo panel -->
+		<!-- Sidebar -->
+		<!-- Page Content overlay -->
+		<!-- Vendor JS -->
+		<script src="~/admin/main/js/vendors.min.js"></script>
+		<script src="~/admin/main/js/pages/chat-popup.js"></script>
+		<script src="~/admin/assets/vendor_components/apexcharts-bundle/dist/apexcharts.min.js"></script>
+		<script src="~/admin/assets/icons/feather-icons/feather.min.js"></script>
+		<script src="~/admin/assets/vendor_components/OwlCarousel2/dist/owl.carousel.js"></script>
+		<!-- Riday Admin App -->
+		
+        <script src="~/admin/main/js/template.js"></script>
+		<script src="~/admin/main/js/pages/dashboard.js"></script>
+
+
+
+
+		<script src="~/admin/assets/vendor_components/chart.js-master/Chart.min.js"></script>
+
+	
+
+		<script>
+			function logout() {
+				var form = document.createElement('form');
+				form.action = '/Identity/Account/Logout';
+				form.method = 'post';
+
+				// Create and append the anti-forgery token input element
+				var tokenInput = document.createElement('input');
+				tokenInput.type = 'hidden';
+				tokenInput.name = '__RequestVerificationToken';
+				tokenInput.value = getAntiForgeryToken(); // Call the function to retrieve the anti-forgery token
+				form.appendChild(tokenInput);
+
+				document.body.appendChild(form);
+				form.submit();
+			}
+
+			// Function to retrieve the anti-forgery token from the page's hidden input field
+			function getAntiForgeryToken() {
+				var tokenInput = document.querySelector('input[name="__RequestVerificationToken"]');
+				if (tokenInput) {
+					return tokenInput.value;
+				}
+				return null;
+			}
+		</script>
+
+		@await RenderSectionAsync("Scripts", required: false)
+	</body>
+
+	</html>
+
+
+}
+else
+{
+
+    <!DOCTYPE html>
+    <html class="no-js" lang="en">
+
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="x-ua-compatible" content="ie=edge">
+        <title>@ViewData["Title"] - Cooking_hub</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <!-- Favicon -->
+        <link rel="shortcut icon" href="~/img/favicon.png">
+
+        <!-- Normalize Css -->
+        <link rel="stylesheet" href="~/css/normalize.css">
+        <!-- Main Css -->
+        <link rel="stylesheet" href="~/css/main.css">
+        <!-- Bootstrap Css -->
+        <link rel="stylesheet" href="~/css/bootstrap.min.css">
+        <!-- Animate CSS -->
+        <link rel="stylesheet" href="~/css/animate.min.css">
+        <!-- Fontawesome CSS -->
+        <link rel="stylesheet" href="~/css/fontawesome-all.min.css">
+        <!-- Flaticon CSS -->
+        <link rel="stylesheet" href="~/fonts/flaticon.css">
+        <!-- Custom Css -->
+        <link rel="stylesheet" href="~/style.css">
+        <!-- Modernizr Js -->
+        <script src="~/js/modernizr-3.6.0.min.js"></script>
+    </head>
+
+    <body style="position: relative;">
+
+        <!-- Add your site or application content here -->
+        <!-- Preloader Start Here -->
+        <div id="preloader"></div>
+        <!-- Preloader End Here -->
+        <!-- ScrollUp Start Here -->
+        <a href="#wrapper" data-type="section-switch" class="scrollup">
+            <i class="fas fa-angle-double-up"></i>
+        </a>
+        <!-- ScrollUp End Here -->
+        <div id="wrapper" class="wrapper">
+            <!-- Header Area Start Here -->
+            <header class="header-one">
+                <div id="header-main-menu" class="header-main-menu header-sticky">
+                    <div class="container">
+                        <div class="row">
+                            <div class="col-lg-8 col-md-3 col-sm-4 col-4 possition-static">
+                                <div class="site-logo-mobile">
+                                    <a asp-controller="Home" asp-action="Index" class="sticky-logo-light"><img style="margin-top:10px ;" src="~/logo white.png" alt="Site Logo"></a>
+                                    <a asp-controller="Home" asp-action="Index" class="sticky-logo-dark"><img style="margin-top:1px ;" src="~/logo black.png" alt="Site Logo"></a>
+                                </div>
+                                <nav class="site-nav">
+                                    <ul id="site-menu" class="site-menu">
+                                        <li>
+                                            <a href="#">Home</a>
+                                            <ul class="dropdown-menu-col-1">
+                                                <li><a href="index.html">Home 1</a></li>
+                                                <li><a href="index2.html">Home 2</a></li>
+                                            </ul>
+                                        </li>
+                                        <li>
+                                            <a href="category.html">Category</a>
+                                        </li>
+                                        <li>
+                                            <a href="#">Recipes</a>
+                                            <ul class="dropdown-menu-col-1">
+                                                <li>
+                                                    <a href="recipe-with-sidebar.html">Recipes With Sidebar</a>
+                                                </li>
+                                                <li>
+                                                    <a href="recipe-without-sidebar.html">Recipes Without Sidebar</a>
+                                                </li>
+                                                <li>
+                                                    <a href="single-recipe1.html">Single Recipe 1</a>
+                                                </li>
+                                                <li>
+                                                    <a href="single-recipe2.html">Single Recipe 2</a>
+                                                </li>
+                                            </ul>
+                                        </li>
+                                        <li class="possition-static hide-on-mobile-menu">
+                                            <a href="#">Pages</a>
+                                            <div class="template-mega-menu">
+                                                <div class="container">
+                                                    <div class="row">
+                                                        <div class="col-4">
+                                                            <div class="menu-ctg-title">Home</div>
+                                                            <ul class="sub-menu">
+                                                                <li>
+                                                                    <a href="index.html">
+                                                                        <i class="fas fa-home"></i>Home 1
+                                                                    </a>
+                                                                </li>
+                                                                <li>
+                                                                    <a href="index2.html">
+                                                                        <i class="fas fa-home"></i>Home 2
+                                                                    </a>
+                                                                </li>
+                                                            </ul>
+                                                            <div class="menu-ctg-title">Recipes</div>
+                                                            <ul class="sub-menu">
+                                                                <li>
+                                                                    <a href="recipe-with-sidebar.html">
+                                                                        <i class="fas fa-utensils"></i>Recipes
+                                                                        With Sidebar
+                                                                    </a>
+                                                                </li>
+                                                                <li>
+                                                                    <a href="recipe-without-sidebar.html">
+                                                                        <i class="fas fa-utensils"></i>Recipes
+                                                                        Without
+                                                                        Sidebar
+                                                                    </a>
+                                                                </li>
+                                                            </ul>
+                                                        </div>
+                                                        <div class="col-4">
+                                                            <ul class="sub-menu">
+                                                                <li>
+                                                                    <a href="single-recipe1.html">
+                                                                        <i class="fas fa-utensils"></i>Single
+                                                                        Recipe 1
+                                                                    </a>
+                                                                </li>
+                                                                <li>
+                                                                    <a href="single-recipe2.html">
+                                                                        <i class="fas fa-utensils"></i>Single
+                                                                        Recipe 2
+                                                                    </a>
+                                                                </li>
+                                                            </ul>
+                                                            <div class="menu-ctg-title">Other Pages</div>
+                                                            <ul class="sub-menu">
+                                                                <li>
+                                                                    <a href="about.html"><i class="fab fa-cloudversify"></i>About</a>
+                                                                </li>
+                                                                <li>
+                                                                    <a href="author.html"><i class="fas fa-user"></i>Author</a>
+                                                                </li>
+                                                                <li>
+                                                                    <a href="single-author.html">
+                                                                        <i class="fas fa-user"></i>Author Details
+                                                                    </a>
+                                                                </li>
+                                                            </ul>
+                                                        </div>
+                                                        <div class="col-4">
+                                                            <ul class="sub-menu">
+                                                                <li>
+                                                                    <a href="submit-recipe.html">
+                                                                        <i class="far fa-share-square"></i>Submit Recipe
+                                                                    </a>
+                                                                </li>
+                                                                <li>
+                                                                    <a href="login.html"><i class="fas fa-lock"></i>Login</a>
+                                                                </li>
+                                                                <li>
+                                                                    <a href="404.html">
+                                                                        <i class="fas fa-exclamation-triangle"></i>404  Error
+                                                                    </a>
+                                                                </li>
+                                                            </ul>
+
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </li>
+                                        <li class="hide-on-desktop-menu">
+                                            <a href="#">Pages</a>
+                                            <ul class="dropdown-menu-col-1">
+                                                <li>
+                                                    <a href="about.html">About</a>
+                                                </li>
+                                                <li>
+                                                    <a href="author.html">Author</a>
+                                                </li>
+                                                <li>
+                                                    <a href="single-author.html">Author Details</a>
+                                                </li>
+                                                <li>
+                                                    <a href="submit-recipe.html">Submit Recipe</a>
+                                                </li>
+                                                <li>
+                                                    <a href="login.html">Login</a>
+                                                </li>
+                                                <li>
+                                                    <a href="login.html">404 Error</a>
+                                                </li>
+                                            </ul>
+                                        </li>
+                                        <li>
+                                            <a href="#">Blog</a>
+                                            <ul class="dropdown-menu-col-1">
+                                                <li><a href="blog-grid.html">Blog Grid</a></li>
+                                                <li><a href="blog-list.html">Blog List</a></li>
+                                                <li><a href="single-blog.html">Blog Details</a></li>
+                                            </ul>
+                                        </li>
+
+                                        <li><a href="contact.html">Contact</a></li>
+                                    </ul>
+                                </nav>
+                            </div>
+                            <div class="col-lg-4 col-md-9 col-sm-8 col-8 d-flex align-items-center justify-content-end">
+                                <div class="nav-action-elements-layout1">
+                                    <ul>
+                                        @if (SignInManager.IsSignedIn(User))
+                                        {
+                                            <li class="nav-item">
+                                                <a class="login-btn" asp-area="Identity" asp-page="/Account/Manage/Index" title="Manage">Hello @User.Identity.Name!</a>
+                                            </li>
+                                            <li  class="nav-item">
+                                                <form class="login-btn" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Action("Index", "Home", new { area = "" })">
+                                                    <button type="submit" class="login-btn">Logout</button>
+                                                </form>
+                                            </li>
+                                        }
+                                        else
+                                        {
+
+                                            <li class="nav-item">
+                                                <a class="login-btn" asp-area="Identity" asp-page="/Account/Login">Login</a>
+                                            </li>
+                                            <li class="nav-item">
+                                                <a class="login-btn" asp-area="Identity" asp-page="/Account/Register">Register</a>
+                                            </li>
+
+                                        }
+
+                                        <li>
+                                            <a href="" class="fill-btn">
+                                                <i class="flaticon-plus-1"></i>SUBMIT
+                                                RECIPE
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </div>
+                                <div class="mob-menu-open toggle-menu">
+                                    <span class="bar"></span>
+                                    <span class="bar"></span>
+                                    <span class="bar"></span>
+                                    <span class="bar"></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="header-bottom d-none d-lg-block">
+                    <div class="container">
+                        <div class="row">
+                            <div class="col-lg-4 d-none d-lg-block">
+                                <div class="nav-action-elements-layout2">
+                                    <ul class="nav-social">
+                                        <li><a href="#" title="facebook"><i class="fab fa-facebook-f"></i></a></li>
+                                        <li><a href="#" title="twitter"><i class="fab fa-twitter"></i></a></li>
+                                        <li><a href="#" title="linkedin"><i class="fab fa-linkedin-in"></i></a></li>
+                                        <li><a href="#" title="pinterest"><i class="fab fa-pinterest-p"></i></a></li>
+                                        <li><a href="#" title="skype"><i class="fab fa-skype"></i></a></li>
+                                        <li><a href="#" title="rss"><i class="fas fa-rss"></i></a></li>
+                                        <li><a href="#" title="google-plus"><i class="fab fa-google-plus-g"></i></a></li>
+                                    </ul>
+                                </div>
+                            </div>
+                            <div class="col-lg-4 d-none d-lg-block">
+                                <div class="site-logo-desktop">
+                                    <a asp-controller="Home" asp-action="Index" class="main-logo"><img width="210" style="margin-top: 5px;" src="~/logo black.png" alt="Site Logo"></a>
+                                </div>
+                            </div>
+                            <div class="col-lg-4">
+                                <div class="nav-action-elements-layout3">
+                                    <ul>
+                                        <li>
+                                            <div class="header-search-box">
+                                                <a href="#search" title="Search" class="search-button">
+                                                    <i class="flaticon-search"></i>
+                                                </a>
+                                            </div>
+                                        </li>
+
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </header>
+            <!-- Header Area End Here -->
+            <!-- Inne Page Banner Area Start Here -->
+            <section class="inner-page-banner bg-common" data-bg-image="~/img/figure/inner-page-banner1.jpg">
+                <div class="container">
+                    <div class="row">	
+                        <div class="col-12">
+                            <div class="breadcrumbs-area">
+								<h1 class="h1-overss">@ViewData["Title Description"]</h1>
+                                <ul>
+                                    <li>
+                                        <a asp-controller="Home" asp-action="Index">Home</a>
+                                    </li>
+                                    <li>@ViewData["Title"]</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            <!-- Inne Page Banner Area End Here -->
+            <!-- Error Page Area Start Here -->
+        @RenderBody()
+            @*  <section class="contact-page-wrap">
+        <div class="container">
+        <div class="row">
+
+        </div>
+        </div>
+        </section>*@
+        </div>
+
+        <!-- Footer Area Start Here -->
+        <footer class="ranna-bg-dark" style="   position: absolute;
+                                                bottom: 0;
+                                                right: 0;
+                                                left: 0;">
+            <div class="container">
+                <div class="footer-logo">
+                    <a asp-controller="Home" asp-action="Index"><img width="210" src="~/logo white.png" class="img-fluid" alt="footer-logo"></a>
+                </div>
+                <div class="footer-menu">
+                    <ul>
+                        <li><a href="#">FACEBOOK</a></li>
+                        <li><a href="#">TWITTER</a></li>
+                        <li><a href="#">INSTAGRAM</a></li>
+                        <li><a href="#">PINTEREST</a></li>
+                        <li><a href="#">GOOGLEPLUS</a></li>
+                        <li><a href="#">YOUTUBE</a></li>
+                    </ul>
+                </div>
+                <div class="copyright">© All Right Reserved 2019</div>
+            </div>
+        </footer>
+        <!-- Footer Area End Here -->
+        <!-- Search Box Start Here -->
+        <div id="search" class="search-wrap">
+            <button type="button" class="close">×</button>
+            <form class="search-form">
+                <input type="search" value="" placeholder="Type here........" />
+                <button type="submit" class="search-btn"><i class="flaticon-search"></i></button>
+            </form>
+        </div>
+
+
+
+
+        <!-- Search Box End Here -->
+        <!-- Jquery Js -->
+        <script src="~/js/jquery-3.3.1.min.js"></script>
+        <!-- Bootstrap Js -->
+        <script src="~/js/popper.min.js"></script>
+        <!-- Bootstrap Js -->
+        <script src="~/js/bootstrap.min.js"></script>
+        <!-- Plugins Js -->
+        <script src="~/js/plugins.js"></script>
+        <!-- Smoothscroll Js -->
+        <script src="~/js/smoothscroll.min.js"></script>
+
+        <!-- Validator js -->
+        <script src="~/js/validator.min.js"></script>
+        <!-- Custom Js -->
+        <script src="~/js/main.js"></script>
+        <script>
+            $(document).ready(function () {
+                $('#myModal').modal('show');
+            });
+        </script>
+        @await RenderSectionAsync("Scripts", required: false)
+    </body>
+    </html>
+
+}
+
+
