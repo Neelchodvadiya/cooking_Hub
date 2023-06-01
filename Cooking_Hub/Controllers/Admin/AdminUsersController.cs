@@ -21,39 +21,51 @@ namespace Cooking_Hub.Controllers.Admin
             _context = context;
         }
 
-        // GET: AdminUsersss
-        public async Task<IActionResult> Index(string filter)
-        {
-
+		// GET: AdminUsersss
+		public async Task<IActionResult> Index(string searchString, int? pageNumber, string filter)
+		{
 
 			ViewBag.ShowFilter = true;
-			var users = await _context.AspNetUsers.ToListAsync();
+			var users = _context.AspNetUsers.AsQueryable();
 
-            if (filter == "active")
-            {
-                users = users.Where(u => u.IsActive == true).ToList();
-            }
-            else if (filter == "inactive")
-            {
-                users = users.Where(u => u.IsActive == false).ToList();
-            }
+			if (!String.IsNullOrEmpty(searchString))
+			{
+				users = users.Where(s =>
+					s.UserName.ToLower().Contains(searchString.ToLower()) ||
+					s.Email.ToLower().Contains(searchString.ToLower()) ||
+					s.PhoneNumber.ToLower().Contains(searchString.ToLower())
+				);
+			}
 
-            var viewModel = users.Select(user => new
-            {
-                user.Id,
-                user.UserName,
-                user.Email,
-                user.IsActive,
-                TotalCreatedRecipes = _context.Recipes.Count(r => r.UserId == user.Id),
-                TotalLikedRecipes = _context.RecipeLikes.Count(rl => rl.UserId == user.Id),
-                TotalReviewedRecipes = _context.RecipeReviews.Count(rr => rr.UserId == user.Id)
-            }).ToList<object>();
+			if (!String.IsNullOrEmpty(filter))
+			{
+				if (filter == "active")
+				{
+					users = users.Where(u => u.IsActive == true);
+				}
+				else if (filter == "inactive")
+				{
+					users = users.Where(u => u.IsActive == false);
+				}
+			}
 
-            return View(viewModel);
-        }
+			int pageSize = 6;
+			var viewModel = await PaginatedList<UserViewModel>.CreateAsync(users.Select(user => new UserViewModel
+			{
+				Id = user.Id,
+				UserName = user.UserName,
+				Email = user.Email,
+				IsActive = user.IsActive,
+				TotalCreatedRecipes = _context.Recipes.Count(r => r.UserId == user.Id),
+				TotalLikedRecipes = _context.RecipeLikes.Count(rl => rl.UserId == user.Id),
+				TotalReviewedRecipes = _context.RecipeReviews.Count(rr => rr.UserId == user.Id)
+			}), pageNumber ?? 1, pageSize);
+			ViewBag.SearchString = searchString;
+			return View(viewModel);
+		}
 
-        // GET: AdminUsers/Details/5
-        public async Task<IActionResult> Details(string id)
+		// GET: AdminUsers/Details/5
+		public async Task<IActionResult> Details(string id)
         {
             if (id == null || _context.AspNetUsers == null)
             {

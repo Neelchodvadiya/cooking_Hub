@@ -62,14 +62,15 @@
 							<li class="btn-group nav-item d-none d-xl-inline-block">
 								<div class="app-menu">
 									<div class="search-bx mx-5">
-										<form>
+										@using (Html.BeginForm("Index", ViewContext.RouteData.Values["controller"].ToString(), FormMethod.Get))
+										{
 											<div class="input-group">
-												<input type="search" class="form-control" placeholder="Search" aria-label="Search" aria-describedby="button-addon2">
+												<input type="search" name="searchString" class="form-control" placeholder="Search" aria-label="Search" aria-describedby="button-addon2" value="@ViewData["CurrentFilter"]">
 												<div class="input-group-append">
-													<button class="btn" type="submit" id="button-addon3"><i class="ti-search"></i></button>
+													<button class="btn" type="submit" asp-controller="AdminUsers" asp-action="Index" id="button-addon3"><i class="ti-search"></i></button>
 												</div>
 											</div>
-										</form>
+										}
 									</div>
 								</div>
 							</li>
