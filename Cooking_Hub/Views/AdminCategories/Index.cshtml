@@ -1,0 +1,61 @@
+﻿@model IEnumerable<Cooking_Hub.Models.Category>
+
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container-full">
+	<!-- Content Header (Page header) -->
+	<div class="content-header">
+		<div class="d-flex align-items-center">
+			<div class="me-auto">
+				<h4 class="page-title">Category List</h4>
+				<h4 class="page-title"><a class="btn btn-success" asp-action="Create">Create New</a></h4>
+			</div>
+
+		</div>
+	</div>
+
+	<!-- Main content -->
+	<section class="content">
+		<div class="row">
+			@foreach (var item in Model) 
+			{
+			<div class="col-xxxl-3 col-xl-3 col-lg-6 col-6">
+				<div class="box food-box">
+                        <div class="box-body text-center">
+
+							<div class="menu-item">
+								<img src="~/userimage/@item.CategoryImage" class="img-fluid w-p75" style="border-radius: 50%;height: 167px;" alt="" />
+							</div>
+						<div class="menu-details text-center">
+							<h4 class="mt-20 mb-10">@item.CategoryName</h4>
+							<p>@item.CategoryIsActive</p>
+						</div>
+						<div class="act-btn d-flex justify-content-between">
+							<div class="text-center mx-5">
+									<a asp-action="Details" asp-route-id="@item.CategoryId" class="waves-effect waves-circle btn btn-circle btn-success-light btn-xs mb-5"><i class="fa fa-eye-slash"></i></a>
+								<small class="d-block">View</small>
+							</div>
+							<div class="text-center mx-5">
+									<a asp-action="Edit" asp-route-id="@item.CategoryId" class="waves-effect waves-circle btn btn-circle btn-danger-light btn-xs mb-5"><i class="fa fa-edit"></i></a>
+								<small class="d-block">Edit</small>
+							</div>
+							<div class="text-center mx-5">
+									<a asp-action="Delete" asp-route-id="@item.CategoryId" class="waves-effect waves-circle btn btn-circle btn-primary-light btn-xs mb-5"><i class="fa fa-trash"></i></a>
+								<small class="d-block">Delete</small>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			}
+			
+		</div>
+	</section>
+	<!-- /.content -->
+
+</div>
+
+
