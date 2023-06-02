@@ -1,10 +1,22 @@
-﻿@model IEnumerable<Cooking_Hub.Models.Category>
+﻿@model PaginatedList<Category>
 
 @{
     ViewData["Title"] = "Index";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
-
+@functions {
+	public string GetBorderStyle(bool? isActive)
+	{
+		if (isActive.HasValue && isActive.Value)
+		{
+			return "border: 2px solid green;";
+		}
+		else
+		{
+			return "border: 2px solid red;";
+		}
+	}
+}
 <div class="container-full">
 	<!-- Content Header (Page header) -->
 	<div class="content-header">
@@ -23,15 +35,18 @@
 			@foreach (var item in Model) 
 			{
 			<div class="col-xxxl-3 col-xl-3 col-lg-6 col-6">
-				<div class="box food-box">
+					<div class="box food-box" style="@GetBorderStyle(item.CategoryIsActive);">
                         <div class="box-body text-center">
 
 							<div class="menu-item">
 								<img src="~/userimage/@item.CategoryImage" class="img-fluid w-p75" style="border-radius: 50%;height: 167px;" alt="" />
 							</div>
 						<div class="menu-details text-center">
-							<h4 class="mt-20 mb-10">@item.CategoryName</h4>
-							<p>@item.CategoryIsActive</p>
+								<h4 class="mt-20 mb-10">
+									@(item.CategoryName.Length > 15 ? item.CategoryName.Substring(0, 15) + "..." : item.CategoryName)
+								</h4>
+
+								<p>@(item.CategoryIsActive.HasValue ? (item.CategoryIsActive.Value ? "Active" : "Inactive") : "Inactive")</p>
 						</div>
 						<div class="act-btn d-flex justify-content-between">
 							<div class="text-center mx-5">
@@ -57,5 +72,17 @@
 	<!-- /.content -->
 
 </div>
+<a asp-action="Index"
+   asp-route-searchString="@ViewBag.SearchString"
+   asp-route-pageNumber="@(Model.PageIndex - 1)"
+   class="btn btn-default @(Model.HasPreviousPage ? "" : "disabled")">
+	Previous
+</a>
+<a asp-action="Index"
+   asp-route-searchString="@ViewBag.SearchString"
+   asp-route-pageNumber="@(Model.PageIndex + 1)"
+   class="btn btn-default @(Model.HasNextPage ? "" : "disabled")">
+	Next
+</a>
 
 

@@ -6,10 +6,14 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Cooking_Hub.Models;
+using Microsoft.AspNetCore.Authorization;
+using System.Data;
+using System.Security.Cryptography.Pkcs;
 
 namespace Cooking_Hub.Controllers.Admin
 {
-    public class AdminCategoriesController : Controller
+	[Authorize(Roles = "Admin")]
+	public class AdminCategoriesController : Controller
     {
         private readonly CookingHubContext _context;
         private readonly IWebHostEnvironment hostEnvironment;
@@ -21,9 +25,40 @@ namespace Cooking_Hub.Controllers.Admin
         }
 
         // GET: AdminCategories
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(string searchString, int? pageNumber)
         {
-              return _context.Categories != null ? 
+
+            var categories = _context.Categories.AsQueryable();
+
+            if (!String.IsNullOrEmpty(searchString))
+            {
+                bool? searchActive = null;
+
+                if (searchString.Equals("active", StringComparison.OrdinalIgnoreCase))
+                {
+                    searchActive = true;
+                }
+                else if (searchString.Equals("inactive", StringComparison.OrdinalIgnoreCase))
+                {
+                    searchActive = false;
+                }
+
+                categories = categories.Where(c =>
+                    c.CategoryName.ToLower().Contains(searchString.ToLower()) ||
+                    (searchActive == null || c.CategoryIsActive == searchActive));
+            }
+
+            if (searchString != null)
+            {
+                pageNumber = 1;
+            }
+            int pageSize = 8;
+            var paginatedList = await PaginatedList<Category>.CreateAsync(categories.AsNoTracking(), pageNumber ?? 1, pageSize);
+
+            ViewBag.SearchString = searchString; // Add this line to store the search query in the ViewBag
+
+            return View(paginatedList);
+            return _context.Categories != null ? 
                           View(await _context.Categories.ToListAsync()) :
                           Problem("Entity set 'CookingHubContext.Categories'  is null.");
         }
@@ -61,22 +96,24 @@ namespace Cooking_Hub.Controllers.Admin
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("CategoryId,CategoryName,CategoryIsActive,CategoryImage")] Category category, IFormFile photo)
         {
+           
             if (ModelState.IsValid)
             {
              
                 if (photo != null)
                 {
-                    string filename = photo.FileName;
-                    string filepath = Path.Combine(hostEnvironment.WebRootPath, "UserImage", filename);
+					string filename = Path.GetFileName(photo.FileName);
+					string uniqueFilename = $"{Path.GetFileNameWithoutExtension(filename)}_{DateTime.Now.Ticks}{Path.GetExtension(filename)}";
+					string filepath = Path.Combine(hostEnvironment.WebRootPath, "UserImage", uniqueFilename);
 
-                    using (var stream = new FileStream(filepath, FileMode.Create))
-                    {
+					using (var stream = new FileStream(filepath, FileMode.Create))
+					{
+						await photo.CopyToAsync(stream);
+					}
 
-                        await photo.CopyToAsync(stream);
-                    }
-                    category.CategoryImage = filename;
+					category.CategoryImage = uniqueFilename;
 
-                }
+				}
                 _context.Add(category);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
@@ -105,20 +142,48 @@ namespace Cooking_Hub.Controllers.Admin
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(string id, [Bind("CategoryId,CategoryName,CategoryIsActive,CategoryImage")] Category category)
+        [Route("AdminCategories/Edit/{id}")]
+        public async Task<IActionResult> Edit(string id,  Category category, IFormFile photo)
         {
+
             if (id != category.CategoryId)
             {
                 return NotFound();
             }
-
-            if (ModelState.IsValid)
+            
+            if (photo == null)
             {
+                var existingCategory = await _context.Categories.FindAsync(category.CategoryId);
+                category.CategoryImage = existingCategory.CategoryImage;
+             
+                _context.Entry(existingCategory).State = EntityState.Detached;
+            }
+
+            /*if (!ModelState.IsValid)
+            {*/
+               
+
                 try
                 {
+                   
+                    if (photo != null)
+                    {
+                        string filename = Path.GetFileName(photo.FileName);
+                        string uniqueFilename = $"{Path.GetFileNameWithoutExtension(filename)}_{DateTime.Now.Ticks}{Path.GetExtension(filename)}";
+                        string filepath = Path.Combine(hostEnvironment.WebRootPath, "UserImage", uniqueFilename);
+
+                        using (var stream = new FileStream(filepath, FileMode.Create))
+                        {
+                            await photo.CopyToAsync(stream);
+                        }
+
+                        category.CategoryImage = uniqueFilename;
+
+                    }
                     _context.Update(category);
                     await _context.SaveChangesAsync();
-                }
+                return RedirectToAction(nameof(Index));
+            }
                 catch (DbUpdateConcurrencyException)
                 {
                     if (!CategoryExists(category.CategoryId))
@@ -127,12 +192,15 @@ namespace Cooking_Hub.Controllers.Admin
                     }
                     else
                     {
-                        throw;
-                    }
+                    return View(category);
+                  
                 }
-                return RedirectToAction(nameof(Index));
+                
             }
-            return View(category);
+            
+
+            /* }*/
+
         }
 
         // GET: AdminCategories/Delete/5

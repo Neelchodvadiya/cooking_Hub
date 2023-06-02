@@ -9,40 +9,115 @@
 
 <h4>Category</h4>
 <hr />
-<div class="row">
-    <div class="col-md-4">
-        <form asp-action="Create" enctype="multipart/form-data">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="form-group" style="display:none;">
-                @Html.HiddenFor(model => model.CategoryId)
-                <label asp-for="CategoryId" class="control-label"></label>
-                <input asp-for="CategoryId" class="form-control" />
-                <span asp-validation-for="CategoryId" class="text-danger"></span>
+<div class="container-full">
+    <!-- Content Header (Page header) -->
+    <div class="content-header">
+        <div class="d-flex align-items-center">
+            <div class="me-auto">
+                <h4 class="page-title">Category Create</h4>
+               
             </div>
 
-            <div class="form-group">
-                <label asp-for="CategoryName" class="control-label"></label>
-                <input asp-for="CategoryName" class="form-control" />
-                <span asp-validation-for="CategoryName" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="CategoryIsActive" class="control-label"></label>
-                <input asp-for="CategoryIsActive" class="form-control" />
-                <span asp-validation-for="CategoryIsActive" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="CategoryImage" class="control-label"></label>
-                <input name="photo" type="file" class="form-control" />
-                <span asp-validation-for="CategoryImage" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-primary" />
-            </div>
-        </form>
+        </div>
     </div>
+
+    <!-- Main content -->
+    <section class="content">
+        <div class="row">
+
+            <div class="col-md-6 col-12">
+                <div class="media bg-white mb-20">
+                    <div class="media-body">
+                        <form asp-action="Create" enctype="multipart/form-data">
+                            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                            <div class="form-group" style="display:none;">
+                                @Html.HiddenFor(model => model.CategoryId)
+                                <label asp-for="CategoryId" class="control-label"></label>
+                                <input asp-for="CategoryId" class="form-control" />
+                                <span asp-validation-for="CategoryId" class="text-danger"></span>
+                            </div>
+
+                            <div class="form-group">
+                                <label asp-for="CategoryName" class="control-label"></label>
+                                <input asp-for="CategoryName" class="form-control" />
+                                <span asp-validation-for="CategoryName" class="text-danger"></span>
+                            </div>
+                            <div class="form-group">
+                                <label asp-for="CategoryIsActive" class="control-label"></label>
+                                <input type="hidden" name="CategoryIsActive" value="true">
+                                <label class="switch">
+                                    <input type="checkbox" id="toggle-switch" name="CategoryIsActive" value="true" checked>
+                                    <span class="switch-indicator"></span>
+                                </label>
+                                <span asp-validation-for="CategoryIsActive" class="text-danger"></span>
+                            </div>
+
+                            @*<div class="form-group">
+                                <label asp-for="CategoryIsActive" class="control-label"></label>
+                                <input asp-for="CategoryIsActive" class="form-control" />
+                                <span asp-validation-for="CategoryIsActive" class="text-danger"></span>
+                            </div>*@
+                            <div class="form-group">
+                                <label asp-for="CategoryImage" class="control-label"></label>
+                                <div class="image-wrapper">
+                                    <img src="~/img/file-upload-01.png" id="previewImage" class="image-preview" alt="Image Preview"style="max-width:45%" >
+                                    <input id="fileInput" name="photo" type="file" style="display: none;" class="form-control" />
+                                </div>
+                                <span id="fileError" asp-validation-for="CategoryImage" class="text-danger"></span>
+                            </div>
+                            <div class="form-group">
+                                <input type="submit" value="Create" class="btn btn-primary" />
+                            </div>
+                        </form>
+
+                    </div>
+                </div>
+             </div>
+        </div>
+    </section>
 </div>
 
 <div>
     <a asp-action="Index">Back to List</a>
 </div>
+
+
+
+<script>
+    var checkbox = document.getElementById('toggle-switch');
+    var hiddenInput = document.querySelector('input[name="CategoryIsActive"]');
+
+    checkbox.addEventListener('change', function () {
+        hiddenInput.value = checkbox.checked ? 'true' : 'false';
+    });
+</script>
+<script>
+
+    document.querySelector('form').addEventListener('submit', function (event) {
+        var fileInput = document.getElementById('fileInput');
+        if (fileInput.files.length === '') {
+            document.getElementById('fileError').textContent = 'Please select a file.';
+            event.preventDefault(); // Prevent form submission
+        }
+    });
+    document.getElementById('previewImage').addEventListener('click', function () {
+        document.getElementById('fileInput').click();
+    });
+
+    document.getElementById('fileInput').addEventListener('change', function () {
+        var reader = new FileReader();
+
+        reader.onload = function (e) {
+            document.getElementById('previewImage').setAttribute('src', e.target.result);
+        };
+
+        reader.readAsDataURL(this.files[0]);
+    });
+</script>
+
+
+
+
+
+
 

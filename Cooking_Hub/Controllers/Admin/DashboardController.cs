@@ -28,8 +28,10 @@ namespace Cooking_Hub.Controllers.Admin
         {
             try
             {
-				//user chart
-
+				var user = await _userManager.GetUserAsync(User);
+				string currentUserName = user.UserName;
+                //user chart
+                ViewBag.currentUserName = currentUserName;
 				var currentMonth = DateTime.Now.Month;
 				var currentYear = DateTime.Now.Year;
 
