@@ -44,8 +44,8 @@ namespace Cooking_Hub.Controllers.Admin
                 }
 
                 categories = categories.Where(c =>
-                    c.CategoryName.ToLower().Contains(searchString.ToLower()) ||
-                    (searchActive == null || c.CategoryIsActive == searchActive));
+                         (c.CategoryName.ToLower().Contains(searchString.ToLower()) ||
+                         (searchActive.HasValue && c.CategoryIsActive == searchActive.Value)));
             }
 
             if (searchString != null)
@@ -56,11 +56,13 @@ namespace Cooking_Hub.Controllers.Admin
             var paginatedList = await PaginatedList<Category>.CreateAsync(categories.AsNoTracking(), pageNumber ?? 1, pageSize);
 
             ViewBag.SearchString = searchString; // Add this line to store the search query in the ViewBag
+            if (paginatedList.Count == 0)
+            {
+				return View(paginatedList); // Return a "Not Found" error if no categories match the search criteria
+			}
 
             return View(paginatedList);
-            return _context.Categories != null ? 
-                          View(await _context.Categories.ToListAsync()) :
-                          Problem("Entity set 'CookingHubContext.Categories'  is null.");
+          
         }
 
         // GET: AdminCategories/Details/5
@@ -99,6 +101,13 @@ namespace Cooking_Hub.Controllers.Admin
            
             if (ModelState.IsValid)
             {
+                // Check if category name already exists
+                if (_context.Categories.Any(c => c.CategoryName == category.CategoryName))
+                {
+                    ModelState.AddModelError("CategoryName", "Category Name already exists at this category level");
+                    return View(category);
+                }
+
              
                 if (photo != null)
                 {

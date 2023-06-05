@@ -1,4 +1,7 @@
-﻿@model PaginatedList<Category>
+﻿
+
+
+@model PaginatedList<Category>
 
 @{
     ViewData["Title"] = "Index";
@@ -17,72 +20,88 @@
 		}
 	}
 }
-<div class="container-full">
-	<!-- Content Header (Page header) -->
-	<div class="content-header">
-		<div class="d-flex align-items-center">
-			<div class="me-auto">
-				<h4 class="page-title">Category List</h4>
-				<h4 class="page-title"><a class="btn btn-success" asp-action="Create">Create New</a></h4>
-			</div>
-
-		</div>
+@if (Model.Count == 0)
+{
+	<div class="alert alert-warning" style="width: 64%;display: flex;justify-content: space-between;" role="alert" id="alert-message" >
+		<span style="margin-top: 8px;color: purple;">No categories found.</span>
+		<button id="redirectButton" class="waves-effect waves-circle btn btn-circle btn-danger-light btn-xs  mb-5"><i class="fa fa-times"></i></button>
 	</div>
+}
+else
+{
+	<div class="container-full">
+		<!-- Content Header (Page header) -->
+		<div class="content-header">
+			<div class="d-flex align-items-center">
+				<div class="me-auto">
+					<h4 class="page-title">Category List</h4>
+					<h4 class="page-title"><a class="btn btn-success" asp-action="Create">Create New</a></h4>
+				</div>
 
-	<!-- Main content -->
-	<section class="content">
-		<div class="row">
-			@foreach (var item in Model) 
-			{
-			<div class="col-xxxl-3 col-xl-3 col-lg-6 col-6">
-					<div class="box food-box" style="@GetBorderStyle(item.CategoryIsActive);">
-                        <div class="box-body text-center">
+			</div>
+		</div>
 
-							<div class="menu-item">
-								<img src="~/userimage/@item.CategoryImage" class="img-fluid w-p75" style="border-radius: 50%;height: 167px;" alt="" />
-							</div>
-						<div class="menu-details text-center">
-								<h4 class="mt-20 mb-10">
-									@(item.CategoryName.Length > 15 ? item.CategoryName.Substring(0, 15) + "..." : item.CategoryName)
-								</h4>
+		<!-- Main content -->
+		<section class="content">
+			<div class="row">
+				@foreach (var item in Model)
+				{
+					<div class="col-xxxl-3 col-xl-3 col-lg-6 col-6">
+						<div class="box food-box" style="@GetBorderStyle(item.CategoryIsActive);">
+							<div class="box-body text-center">
 
-								<p>@(item.CategoryIsActive.HasValue ? (item.CategoryIsActive.Value ? "Active" : "Inactive") : "Inactive")</p>
-						</div>
-						<div class="act-btn d-flex justify-content-between">
-							<div class="text-center mx-5">
-									<a asp-action="Details" asp-route-id="@item.CategoryId" class="waves-effect waves-circle btn btn-circle btn-success-light btn-xs mb-5"><i class="fa fa-eye-slash"></i></a>
-								<small class="d-block">View</small>
-							</div>
-							<div class="text-center mx-5">
-									<a asp-action="Edit" asp-route-id="@item.CategoryId" class="waves-effect waves-circle btn btn-circle btn-danger-light btn-xs mb-5"><i class="fa fa-edit"></i></a>
-								<small class="d-block">Edit</small>
-							</div>
-							<div class="text-center mx-5">
-									<a asp-action="Delete" asp-route-id="@item.CategoryId" class="waves-effect waves-circle btn btn-circle btn-primary-light btn-xs mb-5"><i class="fa fa-trash"></i></a>
-								<small class="d-block">Delete</small>
+								<div class="menu-item">
+									<img src="~/userimage/@item.CategoryImage" class="img-fluid w-p75" style="border-radius: 50%;height: 167px;" alt="" />
+								</div>
+								<div class="menu-details text-center">
+									<h4 class="mt-20 mb-10">
+										@(item.CategoryName.Length > 15 ? item.CategoryName.Substring(0, 15) + "..." : item.CategoryName)
+									</h4>
+
+									<p>@(item.CategoryIsActive.HasValue ? (item.CategoryIsActive.Value ? "Active" : "Inactive") : "Inactive")</p>
+								</div>
+								<div class="act-btn d-flex justify-content-between">
+									<div class="text-center mx-5">
+										<a asp-action="Details" asp-route-id="@item.CategoryId" class="waves-effect waves-circle btn btn-circle btn-success-light mb-5"><i class="fa fa-eye"></i></a>
+										<small class="d-block">View</small>
+									</div>
+									<div class="text-center mx-5">
+										<a asp-action="Edit" asp-route-id="@item.CategoryId" class="waves-effect waves-circle btn btn-circle btn-primary-light  mb-5"><i class="fa fa-edit"></i></a>
+										<small class="d-block">Edit</small>
+									</div>
+									<div class="text-center mx-5">
+										<a asp-action="Delete" asp-route-id="@item.CategoryId" class="waves-effect waves-circle btn btn-circle btn-danger-light  mb-5"><i class="fa fa-trash"></i></a>
+										<small class="d-block">Delete</small>
+									</div>
+								</div>
 							</div>
 						</div>
 					</div>
-				</div>
-			</div>
-			}
-			
-		</div>
-	</section>
-	<!-- /.content -->
+				}
 
-</div>
-<a asp-action="Index"
+			</div>
+		</section>
+		<!-- /.content -->
+
+	</div>
+	<a asp-action="Index"
    asp-route-searchString="@ViewBag.SearchString"
    asp-route-pageNumber="@(Model.PageIndex - 1)"
-   class="btn btn-default @(Model.HasPreviousPage ? "" : "disabled")">
-	Previous
-</a>
-<a asp-action="Index"
+	   class="btn btn-default @(Model.HasPreviousPage ? "" : "disabled")">
+		Previous
+	</a>
+	<a asp-action="Index"
    asp-route-searchString="@ViewBag.SearchString"
    asp-route-pageNumber="@(Model.PageIndex + 1)"
-   class="btn btn-default @(Model.HasNextPage ? "" : "disabled")">
-	Next
-</a>
+	   class="btn btn-default @(Model.HasNextPage ? "" : "disabled")">
+		Next
+	</a>
 
-
+}
+<script>
+	// Add a click event listener to the button
+	document.getElementById("redirectButton").addEventListener("click", function () {
+		// Redirect to the index page
+		window.location.href = "@Url.Action("Index")";
+	});
+</script>
