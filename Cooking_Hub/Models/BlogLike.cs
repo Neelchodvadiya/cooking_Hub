@@ -11,6 +11,8 @@ public partial class BlogLike
 
     public string BlogId { get; set; } = null!;
 
+    public DateTime? LikedAt { get; set; }
+
     public virtual Blog Blog { get; set; } = null!;
 
     public virtual AspNetUser User { get; set; } = null!;
