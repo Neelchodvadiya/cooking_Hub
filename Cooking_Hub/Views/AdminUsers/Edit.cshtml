@@ -8,71 +8,139 @@
 <h1>Edit</h1>
 
 <h4>AspNetUser</h4>
-<hr />
-<div class="row">
-    <div class="col-md-4">
-        <form asp-action="Edit">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <input type="hidden" asp-for="Id" />
-            <div class="form-group">
-                <label asp-for="UserName" class="control-label"></label>
-                <input asp-for="UserName" class="form-control" />
-                <span asp-validation-for="UserName" class="text-danger"></span>
+<div class="container-xl px-4 mt-4">
+    <hr class="mt-0 mb-4">
+    <div class="row">
+        <form asp-action="Edit" style="display: flex;" enctype="multipart/form-data">
+            <div class="col-xl-4" style="margin-right: 20px;">
+                <!-- Profile picture card-->
+                <div class="card mb-4 mb-xl-0">
+                    <div class="card-header">Profile Picture</div>
+                    <div class="card-body text-center">
+                        <!-- Profile picture image-->
+                        <label asp-for="ImageFilePath" class="control-label"></label>
+                        <div class="image-wrapper">
+                            @if (string.IsNullOrEmpty(Model.ImageFilePath))
+                            {
+                                <img id="previewImage" src="http://bootdey.com/img/Content/avatar/avatar1.png" class="img-account-profile rounded-circle mb-2" alt="Default Image" style="max-width: 45%" />
+                                
+                            }
+                            else
+                            {
+                                <img src="~/userimage/@Model.ImageFilePath" id="previewImage" class="image-preview" alt="Default Image" style="max-width:45%">
+                            }
+                            
+                            <input id="fileInput" name="photo" type="file" style="display: none;" class="form-control" />
+                        </div>
+                        <span id="fileError" asp-validation-for="ImageFilePath" class="text-danger"></span>
+                        @*               <button id="uploadImageBtn" class="btn btn-primary" type="button">Upload new image</button>*@
+                        <!-- Profile picture help block-->
+                        <div class="small font-italic text-muted mb-4">JPG or PNG no larger than 5 MB</div>
+                        <!-- Profile picture upload button-->
+                        <button id="uploadImageBtn" class="btn btn-primary" type="button">Upload new image</button>
+                    </div>
+                </div>
             </div>
-            <div class="form-group">
-                <label asp-for="FirstName" class="control-label"></label>
-                <input asp-for="FirstName" class="form-control" />
-                <span asp-validation-for="FirstName" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="LastName" class="control-label"></label>
-                <input asp-for="LastName" class="form-control" />
-                <span asp-validation-for="LastName" class="text-danger"></span>
-            </div>
-          
-            <div class="form-group">
-                <label asp-for="Email" class="control-label"></label>
-                <input asp-for="Email" class="form-control" />
-                <span asp-validation-for="Email" class="text-danger"></span>
-            </div>
-           
-            <div class="form-group form-check">
-                <label class="form-check-label">
-                    <input class="form-check-input" asp-for="EmailConfirmed" /> @Html.DisplayNameFor(model => model.EmailConfirmed)
-                </label>
-            </div>
-           
-            <div class="form-group">
-                <label asp-for="PhoneNumber" class="control-label"></label>
-                <input asp-for="PhoneNumber" class="form-control" />
-                <span asp-validation-for="PhoneNumber" class="text-danger"></span>
-            </div>
-           
-        
-            
-            <div class="form-group">
-                <label asp-for="Gender" class="control-label"></label>
-                <input asp-for="Gender" class="form-control" />
-                <span asp-validation-for="Gender" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="ImageFilePath" class="control-label"></label>
-                <input asp-for="ImageFilePath" class="form-control" />
-                <span asp-validation-for="ImageFilePath" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="IsActive" class="control-label"></label>
-                <input asp-for="IsActive" class="form-control" />
-                <span asp-validation-for="IsActive" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="CreatedAt" class="control-label"></label>
-                <input asp-for="CreatedAt" class="form-control" />
-                <span asp-validation-for="CreatedAt" class="text-danger"></span>
-            </div>
-           
-            <div class="form-group">
-                <input type="submit" value="Save" class="btn btn-primary" />
+
+            <div class="col-xl-8">
+                <!-- Account details card-->
+                <div class="card mb-4">
+                    <div class="card-header">Account Details</div>
+                    <div class="card-body">
+
+                        <!-- Form Group (username)-->
+                        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                        <div class="form-group" style="display:none;">
+                            @Html.HiddenFor(model => model.Id)
+                            <label asp-for="Id" class="control-label"></label>
+                            <input asp-for="Id" class="form-control" />
+                            <span asp-validation-for="Id" class="text-danger"></span>
+                        </div>
+                        <div class="mb-3">
+                            <label asp-for="UserName" class=" small mb-1" for="inputUsername">Username (how your name will appear to other users on the site)</label>
+                            <input asp-for="UserName" class="form-control" id="UserName" type="text" placeholder="Enter your username">
+                            <span asp-validation-for="UserName" class="text-danger"></span>
+                        </div>
+                        <!-- Form Row-->
+                        <div class="row gx-3 mb-3">
+                            <!-- Form Group (first name)-->
+                            <div class="col-md-6">
+                                <label asp-for="FirstName" class="small mb-1" for="inputFirstName">First name</label>
+                                <input asp-for="FirstName" class="form-control" id="inputFirstName" type="text" placeholder="Enter your first name">
+                                <span asp-validation-for="FirstName" class="text-danger"></span>
+                            </div>
+                            <!-- Form Group (last name)-->
+                            <div class="col-md-6">
+                                <label asp-for="FirstName" class="small mb-1" for="inputLastName">Last name</label>
+                                <input asp-for="LastName" class="form-control" id="inputLastName" type="text" placeholder="Enter your last name">
+                                <span asp-validation-for="LastName" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <!-- Form Row        -->
+                        <div class="row gx-3 mb-3">
+                            <!-- Form Group (organization name)-->
+                            <div class="col-md-6">
+                                <label class="small mb-1" for="inputOrgName">Gender</label><br />
+                                <div class="form-check form-check-inline">
+                                    <input asp-for="Gender" class="form-check-input" type="radio" value="Male" id="genderMale">
+                                    <label class="form-check-label" for="genderMale">Male</label>
+                                </div>
+                                <div class="form-check form-check-inline">
+                                    <input asp-for="Gender" class="form-check-input" type="radio" value="Female" id="genderFemale">
+                                    <label class="form-check-label" for="genderFemale">Female</label>
+                                </div>
+                                <span asp-validation-for="Gender" class="text-danger"></span>
+
+                            </div>
+                            <!-- Form Group (location)-->
+                            <div class="col-md-6">
+                              
+                                <label class="small mb-1" for="inputLocation">User Status</label><br />
+                                
+                                <label class="switch">
+                                    <input type="checkbox" id="toggle-switch" name="IsActive" value="true"  @(Model.IsActive.HasValue && Model.IsActive.Value ? "checked" : "")>
+                                    <span class="switch-indicator"></span>
+                                </label>
+                                <span asp-validation-for="IsActive" class="text-danger"></span>
+
+                            </div>
+                        </div>
+                        <!-- Form Group (email address)-->
+                        <div class="mb-3">
+                            <label class="small mb-1" for="inputEmailAddress">Email address</label>
+                            <input asp-for="Email" class="form-control" id="inputEmailAddress" type="email" placeholder="Enter your email address">
+                            <span asp-validation-for="Email" class="text-danger"></span>
+                        </div>
+                        <div class="form-group" style="display:none;">
+                            <label asp-for="AccessFailedCount" class="control-label"></label>
+                            <input asp-for="AccessFailedCount" class="form-control" value="0" />
+                            <span asp-validation-for="AccessFailedCount" class="text-danger"></span>
+                        </div>
+                        <div class="form-group" style="display:none;">
+                            <label asp-for="CreatedAt" class="control-label"></label>
+                            <input asp-for="CreatedAt" class="form-control" value="@DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss")" />
+                            <span asp-validation-for="CreatedAt" class="text-danger"></span>
+                        </div>
+                        <!-- Form Row-->
+                        <div class="row gx-3 mb-3">
+                            <!-- Form Group (phone number)-->
+                            <div class="col-md-6">
+                                <label class="small mb-1" for="inputPhone">Phone number</label>
+                                <input asp-for="PhoneNumber" class="form-control" id="inputPhone" type="tel" placeholder="Enter your phone number">
+                                <span asp-validation-for="PhoneNumber" class="text-danger"></span>
+                            </div>
+                            <!-- Form Group (birthday)-->
+                            <div class="col-md-6">
+                                <label class="small mb-1" for="inputBirthday">CreatedAt</label>
+
+                                <span asp-for="CreatedAt" class="form-control" id="inputBirthday" type="text" name="birthday">@DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss")</span>
+                            </div>
+                        </div>
+                        <!-- Save changes button-->
+                        <button class="btn btn-primary" type="submit">Save changes</button>
+
+                    </div>
+                </div>
             </div>
         </form>
     </div>
@@ -81,4 +149,51 @@
 <div>
     <a asp-action="Index">Back to List</a>
 </div>
+<script>
+    var checkbox = document.getElementById('toggle-switch');
+    var hiddenInput = document.querySelector('input[name="IsActive"]');
 
+    checkbox.addEventListener('change', function () {
+        hiddenInput.value = checkbox.checked ? 'true' : 'false';
+    });
+</script>
+<script>
+    $(document).ready(function () {
+        // Handle file input change event
+        $('#fileInput').change(function () {
+            var file = $(this)[0].files[0];
+            if (file) {
+                var reader = new FileReader();
+                reader.onload = function (e) {
+                    $('#previewImage').attr('src', e.target.result);
+                }
+                reader.readAsDataURL(file);
+            } else {
+                // Reset to default image when no file is selected
+                $('#previewImage').attr('src', '~/img/file-upload-01.png');
+            }
+        });
+    });
+</script>
+<script>
+    document.getElementById('uploadImageBtn').addEventListener('click', function () {
+        document.getElementById('fileInput').click();
+    });
+
+    document.getElementById('fileInput').addEventListener('change', function () {
+        var selectedFile = this.files[0];
+        if (selectedFile) {
+            var reader = new FileReader();
+
+            reader.onload = function (e) {
+                document.getElementById('previewImage').setAttribute('src', e.target.result);
+            };
+
+            reader.readAsDataURL(selectedFile);
+            document.getElementById('fileError').textContent = selectedFile.name;
+        } else {
+            document.getElementById('previewImage').setAttribute('src', 'http://bootdey.com/img/Content/avatar/avatar1.png');
+            document.getElementById('fileError').textContent = 'Please select a file.';
+        }
+    });
+</script>

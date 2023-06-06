@@ -34,7 +34,7 @@
                             </div>
                             <div class="form-group">
                                 <label asp-for="CategoryIsActive" class="control-label"></label>
-                                <input type="hidden" name="CategoryIsActive" value="true">
+                                
                                 <label class="switch">
                                     <input type="checkbox" id="toggle-switch" name="CategoryIsActive" value="true" @(Model.CategoryIsActive.HasValue && Model.CategoryIsActive.Value ? "checked" : "")>
                                     <span class="switch-indicator"></span>

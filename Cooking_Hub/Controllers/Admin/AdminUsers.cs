@@ -22,11 +22,12 @@ namespace Cooking_Hub.Controllers.Admin
         private readonly UserManager<CookingHubUser> _userManager;
         private readonly IWebHostEnvironment hostEnvironment;
 
-        public AdminUsers(CookingHubContext context, UserManager<CookingHubUser> userManager)
+        public AdminUsers(CookingHubContext context, UserManager<CookingHubUser> userManager,IWebHostEnvironment hostEnvironment)
         {
             _context = context;
            
             _userManager = userManager;
+            this.hostEnvironment = hostEnvironment;
         }
 
         // GET: AdminUsers
@@ -211,20 +212,40 @@ namespace Cooking_Hub.Controllers.Admin
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(string id, [Bind("Id,UserName,NormalizedUserName,Email,NormalizedEmail,EmailConfirmed,PasswordHash,SecurityStamp,ConcurrencyStamp,PhoneNumber,PhoneNumberConfirmed,TwoFactorEnabled,LockoutEnd,LockoutEnabled,AccessFailedCount,Gender,ImageFilePath,IsActive,CreatedAt,FirstName,LastName")] AspNetUser aspNetUser)
+        public async Task<IActionResult> Edit(string id, [Bind("Id,UserName,NormalizedUserName,Email,NormalizedEmail,EmailConfirmed,PasswordHash,SecurityStamp,ConcurrencyStamp,PhoneNumber,PhoneNumberConfirmed,TwoFactorEnabled,LockoutEnd,LockoutEnabled,AccessFailedCount,Gender,ImageFilePath,IsActive,CreatedAt,FirstName,LastName")] AspNetUser aspNetUser, IFormFile photo)
         {
             if (id != aspNetUser.Id)
             {
                 return NotFound();
             }
 
-            if (ModelState.IsValid)
+            if (photo == null)
             {
-                try
+                var existingImage = await _context.AspNetUsers.FindAsync(aspNetUser.Id);
+                aspNetUser.ImageFilePath = existingImage.ImageFilePath;
+
+                _context.Entry(existingImage).State = EntityState.Detached;
+            }
+            try
                 {
+                    if (photo != null)
+                    {
+                        string filename = Path.GetFileName(photo.FileName);
+                        string uniqueFilename = $"{Path.GetFileNameWithoutExtension(filename)}_{DateTime.Now.Ticks}{Path.GetExtension(filename)}";
+                        string filepath = Path.Combine(hostEnvironment.WebRootPath, "UserImage", uniqueFilename);
+
+                        using (var stream = new FileStream(filepath, FileMode.Create))
+                        {
+                            await photo.CopyToAsync(stream);
+                        }
+
+                        aspNetUser.ImageFilePath = uniqueFilename;
+
+                    }
                     _context.Update(aspNetUser);
                     await _context.SaveChangesAsync();
-                }
+                     return RedirectToAction(nameof(Index));
+            }
                 catch (DbUpdateConcurrencyException)
                 {
                     if (!AspNetUserExists(aspNetUser.Id))
@@ -233,12 +254,13 @@ namespace Cooking_Hub.Controllers.Admin
                     }
                     else
                     {
-                        throw;
+                    return View(aspNetUser);
                     }
-                }
-                return RedirectToAction(nameof(Index));
+                
             }
-            return View(aspNetUser);
+                
+            
+            
         }
 
         // GET: AdminUsers/Delete/5
