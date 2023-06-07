@@ -36,7 +36,17 @@ namespace Cooking_Hub.Controllers.Admin
 
             ViewBag.ShowFilter = true;
             var users = _context.AspNetUsers.AsQueryable();
-
+            if (!String.IsNullOrEmpty(filter))
+            {
+                if (filter == "active")
+                {
+                    users = users.Where(u => u.IsActive == true);
+                }
+                else if (filter == "inactive")
+                {
+                    users = users.Where(u => u.IsActive == false);
+                }
+            }
             if (!String.IsNullOrEmpty(searchString))
             {
                 users = users.Where(s =>
@@ -49,19 +59,9 @@ namespace Cooking_Hub.Controllers.Admin
                 );
             }
 
-            if (!String.IsNullOrEmpty(filter))
-            {
-                if (filter == "active")
-                {
-                    users = users.Where(u => u.IsActive == true);
-                }
-                else if (filter == "inactive")
-                {
-                    users = users.Where(u => u.IsActive == false);
-                }
-            }
+           
 
-            int pageSize = 6;
+            int pageSize = 9;
             var viewModel = await PaginatedList<UserViewModel>.CreateAsync(users
                 .OrderByDescending(u => u.CreatedAt) // Order by CreatedAt in descending order
                 .Select(user => new UserViewModel
@@ -132,6 +132,10 @@ namespace Cooking_Hub.Controllers.Admin
             {
                 ModelState.AddModelError("Email", "Please enter an email address.");
             }
+            if (photo == null)
+            {
+                ModelState.AddModelError("ImageFilePath", "Please Select Image");
+            }
             var existingUser = await _userManager.FindByNameAsync(aspNetUser.UserName);
             if (existingUser != null)
             {
@@ -146,11 +150,10 @@ namespace Cooking_Hub.Controllers.Admin
 
             if (ModelState.IsValid)
             {
-               
-
+              
                 string userid = aspNetUser.Id;
-              aspNetUser.SecurityStamp = Guid.NewGuid().ToString();
-                aspNetUser.ConcurrencyStamp = Guid.NewGuid().ToString(); // Generate new ConcurrencyStamp
+       /*         aspNetUser.SecurityStamp = Guid.NewGuid().ToString();
+                aspNetUser.ConcurrencyStamp = Guid.NewGuid().ToString();*/ // Generate new ConcurrencyStamp
 
                 if (photo != null)
                 {
@@ -166,8 +169,24 @@ namespace Cooking_Hub.Controllers.Admin
                     aspNetUser.ImageFilePath = uniqueFilename;
 
                 }
-                _context.Add(aspNetUser);
-                await _context.SaveChangesAsync();
+
+
+                var users = CreateUser();
+
+                var usersProperties = users.GetType().GetProperties();
+                var aspNetUserProperties = aspNetUser.GetType().GetProperties();
+
+                foreach (var usersProperty in usersProperties)
+                {
+                    var matchingProperty = aspNetUserProperties.FirstOrDefault(p => p.Name == usersProperty.Name && p.PropertyType == usersProperty.PropertyType);
+                    if (matchingProperty != null)
+                    {
+                        var value = matchingProperty.GetValue(aspNetUser);
+                        usersProperty.SetValue(users, value);
+                    }
+                }
+                await _userManager.CreateAsync(users);
+              
                 try
                 {
                     var user = await _userManager.FindByIdAsync(userid);
@@ -189,6 +208,19 @@ namespace Cooking_Hub.Controllers.Admin
                
             }
             return View(aspNetUser);
+        }
+        private CookingHubUser CreateUser()
+        {
+            try
+            {
+                return Activator.CreateInstance<CookingHubUser>();
+            }
+            catch
+            {
+                throw new InvalidOperationException($"Can't create an instance of '{nameof(CookingHubUser)}'. " +
+                    $"Ensure that '{nameof(CookingHubUser)}' is not an abstract class and has a parameterless constructor, or alternatively " +
+                    $"override the register page in /Areas/Identity/Pages/Account/Register.cshtml");
+            }
         }
 
         // GET: AdminUsers/Edit/5
@@ -218,7 +250,10 @@ namespace Cooking_Hub.Controllers.Admin
             {
                 return NotFound();
             }
-
+            if(aspNetUser.IsActive == null)
+            {
+                aspNetUser.IsActive = false;
+            }
             if (photo == null)
             {
                 var existingImage = await _context.AspNetUsers.FindAsync(aspNetUser.Id);
@@ -226,42 +261,77 @@ namespace Cooking_Hub.Controllers.Admin
 
                 _context.Entry(existingImage).State = EntityState.Detached;
             }
+
             try
+            {
+                if (photo != null)
                 {
-                    if (photo != null)
+                    string filename = Path.GetFileName(photo.FileName);
+                    string uniqueFilename = $"{Path.GetFileNameWithoutExtension(filename)}_{DateTime.Now.Ticks}{Path.GetExtension(filename)}";
+                    string filepath = Path.Combine(hostEnvironment.WebRootPath, "UserImage", uniqueFilename);
+
+                    using (var stream = new FileStream(filepath, FileMode.Create))
                     {
-                        string filename = Path.GetFileName(photo.FileName);
-                        string uniqueFilename = $"{Path.GetFileNameWithoutExtension(filename)}_{DateTime.Now.Ticks}{Path.GetExtension(filename)}";
-                        string filepath = Path.Combine(hostEnvironment.WebRootPath, "UserImage", uniqueFilename);
-
-                        using (var stream = new FileStream(filepath, FileMode.Create))
-                        {
-                            await photo.CopyToAsync(stream);
-                        }
-
-                        aspNetUser.ImageFilePath = uniqueFilename;
-
+                        await photo.CopyToAsync(stream);
                     }
-                    _context.Update(aspNetUser);
-                    await _context.SaveChangesAsync();
-                     return RedirectToAction(nameof(Index));
-            }
-                catch (DbUpdateConcurrencyException)
+
+                    aspNetUser.ImageFilePath = uniqueFilename;
+                }
+
+                var existingUser = await _userManager.FindByIdAsync(aspNetUser.Id);
+
+                if (existingUser != null)
                 {
-                    if (!AspNetUserExists(aspNetUser.Id))
+                    existingUser.UserName = aspNetUser.UserName;                  
+                    existingUser.Email = aspNetUser.Email;                  
+                    existingUser.PhoneNumber = aspNetUser.PhoneNumber;                  
+                    existingUser.Gender = aspNetUser.Gender;
+                    existingUser.ImageFilePath = aspNetUser.ImageFilePath;
+                    existingUser.IsActive = aspNetUser.IsActive;
+                    existingUser.CreatedAt = aspNetUser.CreatedAt;
+                    existingUser.FirstName = aspNetUser.FirstName;
+                    existingUser.LastName = aspNetUser.LastName;
+
+                    var result = await _userManager.UpdateAsync(existingUser);
+
+                    if (result.Succeeded)
                     {
-                        return NotFound();
+                        // User update successful
+                        return RedirectToAction(nameof(Index));
                     }
                     else
                     {
-                    return View(aspNetUser);
+                        // User update failed
+                        // Handle the failure scenario
+                        foreach (var error in result.Errors)
+                        {
+                            ModelState.AddModelError(string.Empty, error.Description);
+                        }
                     }
-                
+                }
+                else
+                {
+                    // User not found in the database
+                    // Handle the scenario where the user does not exist
+                    return NotFound();
+                }
             }
-                
-            
-            
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!AspNetUserExists(aspNetUser.Id))
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    return View(aspNetUser);
+                }
+            }
+
+            // If the control reaches this point, there was an error, so return the view with the model
+            return View(aspNetUser);
         }
+
 
         // GET: AdminUsers/Delete/5
         public async Task<IActionResult> Delete(string id)

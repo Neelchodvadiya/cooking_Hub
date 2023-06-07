@@ -23,7 +23,7 @@
                     <!-- Profile picture image-->
                     @if (string.IsNullOrEmpty(Model.ImageFilePath))
                     {
-                        <img class="img-account-profile rounded-circle mb-2"  style="width: 240px; height: 227px;" src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-profiles/avatar-1.webp" alt="">
+                        <img class="img-account-profile rounded-circle mb-2" style="width: 240px; height: 227px;" src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-profiles/avatar-1.webp" alt="">
                        
                     }else{
                         <img class="img-account-profile rounded-circle mb-2" style="width: 240px; height: 227px;" src="~/userimage/@Model.ImageFilePath" alt="">

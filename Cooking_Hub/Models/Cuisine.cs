@@ -9,6 +9,8 @@ public partial class Cuisine
 
     public string CuisineName { get; set; } = null!;
 
+    public string? CuisineImage { get; set; }
+
     public bool IsActive { get; set; }
 
     public virtual ICollection<Recipe> Recipes { get; set; } = new List<Recipe>();

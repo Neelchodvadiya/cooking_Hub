@@ -78,9 +78,26 @@
 							
 							{
 
-								<li><a class="btn btn-outline-primary" href="#AllUser">All User</a></li>
-								<li><a class="btn btn-outline-success" href="#activeuser">ActiveUser</a></li>
-								<li><a class="btn btn-outline-danger" href="#inactiveuser">In ActiveUser </a></li>
+                                <li>
+                                    <form asp-action="Index">
+                                        
+                                        <button class="btn btn-outline-primary">AllUser</button>
+                                    </form>
+                                </li>
+								<li>
+                                    <form asp-action="Index">
+                                        <input type="hidden" name="filter" value="active" />
+                                        <button class="btn btn-outline-success" >ActiveUser</button>
+                                    </form>
+                                </li>
+
+
+                                <li>
+                                    <form asp-action="Index">
+                                        <input type="hidden" name="filter" value="inactive" />
+                                        <button class="btn btn-outline-danger">In ActiveUser</button>
+                                    </form>
+                                </li>
 							
 							}
 							
@@ -140,9 +157,7 @@
 									<a asp-controller="Dashboard" asp-action="Index">
 										<i class="icon-Home"></i>
 										<span>Dashboard</span>
-										<span class="pull-right-container">
-											<i class="fa fa-angle-right pull-right"></i>
-										</span>
+										
 									</a>
 									
 								</li>
