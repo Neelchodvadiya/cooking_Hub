@@ -22,8 +22,20 @@
 }
 @if (Model.Count == 0)
 {
+	<div class="container-full">
+		<!-- Content Header (Page header) -->
+		<div class="content-header">
+			<div class="d-flex align-items-center">
+				<div class="me-auto">
+					<h4 class="page-title">Category List</h4>
+					<h4 class="page-title"><a class="btn btn-success" asp-action="Create">Create New</a></h4>
+				</div>
+
+			</div>
+		</div>
+	</div>
 	<div class="alert alert-warning" style="width: 64%;display: flex;justify-content: space-between;" role="alert" id="alert-message">
-		<span style="margin-top: 8px;color: purple;">No User found.</span>
+		<span style="margin-top: 8px;color: purple;">No Category found.</span>
 		<button id="redirectton" class="waves-effect waves-circle btn btn-circle btn-danger-light btn-xs  mb-5"><i class="fa fa-times"></i></button>
 	</div>
 }

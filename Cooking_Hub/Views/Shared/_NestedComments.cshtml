@@ -1,0 +1,45 @@
+﻿@model IEnumerable<Cooking_Hub.Models.BlogComment>
+@using Cooking_Hub.Data;
+@using Microsoft.AspNetCore.Identity;
+@inject UserManager<CookingHubUser> UserManager
+@{
+    string usessrId = UserManager.GetUserId(User);
+    string newCommentId = Guid.NewGuid().ToString();
+}
+
+@foreach (var nestedComment in Model)
+{
+    <div class="media mb-3 ml-4">
+        <img src="~/UserImage/@nestedComment.User.ImageFilePath" style="width: 60px;" class="mr-3 rounded-circle" alt="User Photo">
+        <div class="media-body">
+            <h5 class="mt-0">@nestedComment.User.FirstName @nestedComment.User.LastName</h5>
+            <p>@nestedComment.BcommentContents</p>
+            <small class="text-muted">@nestedComment.CreatedAt</small>
+
+            <!-- Reply form for nested comments -->
+            <a href="#" class="toggle-reply">Reply</a>
+            <form asp-action="Create" asp-controller="AdminBlogComments" class="reply-form" style="display:none;">
+                <!-- Pass the parent comment's ID -->
+                <div class="form-group" style="display:none">
+                    <input name="CommentId" class="form-control" value="@newCommentId" />
+                    <input name="UserId" class="control-label" value="@usessrId" />
+                    <input name="BlogId" class="control-label" value="@nestedComment.BlogId" />
+                    <input name="CreatedAt" class="form-control" value="@DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss")" />
+                    <input name="ParentId" type="hidden" value="@nestedComment.CommentId" />
+                </div>
+                <div class="form-group">
+                    <textarea name="BcommentContents" class="form-control" rows="2" placeholder="Reply to this comment"></textarea>
+                </div>
+                <button type="submit" class="btn btn-primary">Submit</button>
+            </form>
+
+            <!-- Delete button for comment -->
+            <!-- Display nested comments recursively -->
+            <div class="ml-4">
+                @Html.Partial("_NestedComments", Model.Where(c => c.ParentId == nestedComment.CommentId))
+            </div>
+        </div>
+        <a asp-action="Delete" style=" margin-top: 16px;" asp-route-id="@nestedComment.CommentId" asp-controller="AdminBlogComments" class="waves-effect waves-circle btn btn-circle btn-danger-light btn-xs mb-3"><i class="fa fa-trash"></i></a>
+    </div>
+}
+

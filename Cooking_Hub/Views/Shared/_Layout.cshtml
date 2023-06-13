@@ -161,10 +161,11 @@
 									</a>
 									
 								</li>
-								<li class="treeview">
-									<a href="#">
-										<i class="icon-Clipboard-check"><span class="path1"></span><span class="path2"></span><span class="path3"></span></i>
-										<span>Order</span>
+                                <li class="nav-item @(ViewContext.RouteData.Values["Controller"].ToString() == "AdminCuisines" && ViewContext.RouteData.Values["Action"].ToString() == "Index" ? "active" : "")">
+
+                                    <a asp-controller="AdminCuisines" asp-action="Index">
+                                        <i class="fas fa-utensils"><span class="path1"></span><span class="path2"></span><span class="path3"></span></i>
+                                        <span>Cuisines</span>
 									
 									</a>
 									
@@ -185,19 +186,19 @@
 										
 									</a>
 								</li>
-								<li>
-									<a href="analysis.html">
-										<i class="icon-Chart-line"><span class="path1"></span><span class="path2"></span></i>
-										<span>Analysis</span>
+                                <li class="nav-item @(ViewContext.RouteData.Values["Controller"].ToString() == "AdminBlogs" && ViewContext.RouteData.Values["Action"].ToString() == "Index" ? "active" : "")">
+
+                                    <a asp-controller="AdminBlogs" asp-action="Index">
+                                        <i class="fas fa-newspaper"><span class="path1"></span><span class="path2"></span></i>
+										<span>Blogs </span>
 									</a>
 								</li>
-								<li class="treeview">
-									<a href="#">
-										<i class="icon-Cart"><span class="path1"></span><span class="path2"></span></i>
-										<span>Online Store</span>
-										<span class="pull-right-container">
-											<i class="fa fa-angle-right pull-right"></i>
-										</span>
+                                <li class="nav-item @(ViewContext.RouteData.Values["Controller"].ToString() == "AdminRecipes" && ViewContext.RouteData.Values["Action"].ToString() == "Index" ? "active" : "")">
+
+                                    <a asp-controller="AdminRecipes" asp-action="Index">
+                                        <i class="fas fa-glass"><span class="path1"></span><span class="path2"></span></i>
+										<span>Recipes</span>
+									
 									</a>
 									
 								</li>

@@ -1,0 +1,66 @@
+﻿@model Cooking_Hub.Models.Cuisine
+
+@{
+    ViewData["Title"] = "Details";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container-full">
+    <!-- Content Header (Page header) -->
+    <div class="content-header">
+        <div class="d-flex align-items-center">
+            <div class="me-auto">
+                <h4 class="page-title">Cuisine Details</h4>
+
+            </div>
+
+        </div>
+    </div>
+    <section class="content">
+        <div class="row">
+            <div class="col-md-6 col-12">
+                <div class="media bg-white mb-20">
+                    <div class="media-body">
+
+                        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                        <input type="hidden" asp-for="CuisineId" />
+                        <div class="form-group">
+                            <label asp-for="CuisineName" class="control-label"></label>
+                            <span class="form-control">@Model.CuisineName</span>
+                            <span asp-validation-for="CuisineName" class="text-danger"></span>
+                        </div>
+                        <div class="form-group">
+                            <label asp-for="IsActive" class="control-label"></label>
+                            <div class="switch">
+                                <input type="checkbox" id="toggle-switch" disabled="disabled" @(Model.IsActive && Model.IsActive ? "checked" : "")>
+                                <span class="switch-indicator"></span>
+                            </div>
+                            <span asp-validation-for="IsActive" class="text-danger"></span>
+                        </div>
+                        <div class="form-group">
+                            <label asp-for="CuisineImage" class="control-label"></label>
+                            <div class="image-wrapper">
+                                @if (!string.IsNullOrEmpty(Model.CuisineImage))
+                                {
+                                    <img src="~/userimage/@Model.CuisineImage" id="previewImage" class="image-preview" alt="Image Preview" style="max-width:45%">
+                                }
+                                else
+                                {
+                                    <img src="~/img/file-upload-01.png" id="previewImage" class="image-preview" alt="Default Image" style="max-width:45%">
+                                }
+                            </div>
+                            <span asp-validation-for="CuisineImage" class="text-danger"></span>
+                        </div>
+
+                        <div>
+                            <a asp-action="Edit" asp-route-id="@Model?.CuisineId" class="waves-effect waves-circle btn btn-circle btn-primary-light  mb-5"><i class="fa fa-edit"></i></a>  |
+                            <a asp-action="Index" class="waves-effect waves-circle btn btn-circle btn-primary-light mb-5"> <i class="fas fa-arrow-left"></i>  </a>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+

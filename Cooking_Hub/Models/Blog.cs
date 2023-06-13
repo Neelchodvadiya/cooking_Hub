@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Cooking_Hub.Data;
+using System;
 using System.Collections.Generic;
 
 namespace Cooking_Hub.Models;
@@ -12,6 +13,8 @@ public partial class Blog
     public string UserId { get; set; } = null!;
 
     public string? BlogTitle { get; set; }
+
+    public string? BlogshortDescription { get; set; }
 
     public string? BlogContents { get; set; }
 

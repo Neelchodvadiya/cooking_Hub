@@ -1,0 +1,117 @@
+﻿@model Cooking_Hub.Models.Cuisine
+
+@{
+    ViewData["Title"] = "Edit";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container-full">
+    <!-- Content Header (Page header) -->
+    <div class="content-header">
+        <div class="d-flex align-items-center">
+            <div class="me-auto">
+                <h4 class="page-title">Cuisine Edit</h4>
+
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Main content -->
+    <section class="content">
+        <div class="row">
+
+            <div class="col-md-6 col-12">
+                <div class="media bg-white mb-20">
+                    <div class="media-body">
+                        <form asp-action="Edit" enctype="multipart/form-data">
+                            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                            <input type="hidden" asp-for="CuisineId" />
+                            <div class="form-group">
+                                <label asp-for="CuisineName" class="control-label"></label>
+                                <input asp-for="CuisineName" class="form-control" />
+                                <span asp-validation-for="CuisineName" class="text-danger"></span>
+                            </div>
+                            <div class="form-group">
+                                <label asp-for="IsActive" class="control-label"></label>
+
+                                <label class="switch">
+                                    <input type="checkbox" id="toggle-switch" name="IsActive" value="true" @(Model.IsActive && Model.IsActive ? "checked" : "")>
+                                    <span class="switch-indicator"></span>
+                                </label>
+                                <span asp-validation-for="IsActive" class="text-danger"></span>
+                            </div>
+
+                            <div class="form-group">
+                                <label asp-for="CuisineImage" class="control-label"></label>
+                                <div class="image-wrapper">
+                                    @if (string.IsNullOrEmpty(Model.CuisineImage))
+                                    {
+                                        <img src="~/img/file-upload-01.png" id="previewImage" class="image-preview" alt="Default Image" style="max-width:45%">
+                                    }
+                                    else
+                                    {
+                                        <img src="~/userimage/@Model.CuisineImage" id="previewImage" class="image-preview" alt="Image Preview" style="max-width:45%">
+                                    }
+                                    <input id="fileInput" name="photo" type="file" style="display: none;" class="form-control" />
+                                </div>
+                                <span asp-validation-for="CuisineImage" class="text-danger"></span>
+                            </div>
+                            <div class="form-group">
+                                <button type="submit" value="Save" class="waves-effect  btn btn-primary-light"><i class="fa fa-save"></i></button>
+
+                            </div>
+
+                        </form>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+<script>
+    var checkbox = document.getElementById('toggle-switch');
+    var hiddenInput = document.querySelector('input[name="IsActive"]');
+
+    checkbox.addEventListener('change', function () {
+        hiddenInput.value = checkbox.checked ? 'true' : 'false';
+    });
+</script>
+<script>
+    document.getElementById('previewImage').addEventListener('click', function () {
+        document.getElementById('fileInput').click();
+    });
+
+    document.getElementById('fileInput').addEventListener('change', function () {
+        var reader = new FileReader();
+
+        reader.onload = function (e) {
+            document.getElementById('previewImage').setAttribute('src', e.target.result);
+        };
+
+        reader.readAsDataURL(this.files[0]);
+    });
+</script>
+<script>
+    $(document).ready(function () {
+        // Handle file input change event
+        $('#fileInput').change(function () {
+            var file = $(this)[0].files[0];
+            if (file) {
+                var reader = new FileReader();
+                reader.onload = function (e) {
+                    $('#previewImage').attr('src', e.target.result);
+                }
+                reader.readAsDataURL(file);
+            } else {
+                // Reset to default image when no file is selected
+                $('#previewImage').attr('src', '~/img/file-upload-01.png');
+            }
+        });
+    });
+</script>

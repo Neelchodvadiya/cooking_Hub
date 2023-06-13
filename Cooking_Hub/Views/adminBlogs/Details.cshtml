@@ -1,0 +1,244 @@
+﻿@using Cooking_Hub.Data;
+@using Microsoft.AspNetCore.Identity;
+@model Cooking_Hub.Models.Blog
+@inject UserManager<CookingHubUser> UserManager
+
+@{
+    ViewData["Title"] = "Details";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    string userId = UserManager.GetUserId(User);
+    string CommentssId = Guid.NewGuid().ToString();
+    string Likedids = Guid.NewGuid().ToString();
+
+   
+}
+
+<h1>Details</h1>
+
+<div class="container">
+    <div class="row">
+        <div class="col-md-9">
+            <div class="scrollable-content" style="max-height: 500px; overflow-y: auto;">
+                <div class="card bg-white">
+                    <img src="~/img/blog/blog9.jpg" alt="Blog Image" class="card-img-top">
+                    <div class="card-body">
+                        <ul class="entry-meta" style="display:flex">
+                            <a><i class="fas fa-clock"></i>&nbsp;&nbsp;&nbsp;@Model.CreatedAt</a> &nbsp; &nbsp;&nbsp;&nbsp;
+                            <a><i class="fas fa-user"></i>&nbsp;&nbsp;&nbsp;by <span> @Model.User.UserName</span></a> &nbsp;&nbsp;&nbsp;&nbsp;
+                            <a id="commentLink" href="#"><i class="fas fa-comments"></i>&nbsp;&nbsp;&nbsp;<span>@ViewBag.CommentCount</span></a>&nbsp;&nbsp;&nbsp;&nbsp;
+                            <a href="#"><i id="likeButton" class="fas fa-heart"></i>&nbsp;&nbsp;&nbsp;<span id="likeCount">@ViewBag.LikeCount</span></a>
+                        </ul>
+                        <h2 class="card-title"> @Html.Raw(Model.BlogTitle)</h2>
+                        <p class="card-text"> @Html.Raw(Model.BlogshortDescription)</p>
+                        <h4>Blog Content</h4>
+                        <div class="scrollable" style="max-height: 300px; overflow-y: auto;">
+                            @Html.Raw(Model.BlogContents)
+                            <!-- Add more blog content here -->
+                        </div>
+                        <h4>Comments</h4>
+                        @foreach (var comment in Model.BlogComments.Where(c => c.ParentId == null))
+                        {
+                            <div class="media mb-3">
+                                <img src="~/UserImage/@comment.User.ImageFilePath" style="width: 60px;" class="mr-3 rounded-circle" alt="User Photo">
+                                <div class="media-body">
+                                    <h5 class="mt-0">@comment.User.FirstName @comment.User.LastName</h5>
+                                    <p>@comment.BcommentContents</p>
+                                    <small class="text-muted">@comment.CreatedAt</small>
+                                    <!-- Reply form -->
+                                    <a href="#" class="toggle-reply">Reply</a>
+
+                                    <form asp-action="Create" asp-controller="AdminBlogComments" class="reply-form" style="display:none;">
+                                        <!-- Pass the parent comment's ID -->
+                                        <div style="display:none">
+                                            <input name="CommentId" class="form-control" value="@CommentssId" />
+                                            <input name="UserId" class="control-label" value="@userId" />
+                                            <input name="BlogId" class="control-label" value="@comment.BlogId" />
+                                            <input name="CreatedAt" class="form-control" value="@DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss")" />
+                                            <input name="ParentId" type="hidden" value="@comment.CommentId" />
+
+                                        </div>
+                                        <div class="form-group">
+                                            <textarea name="BcommentContents" class="form-control" rows="2" placeholder="Reply to this comment"></textarea>
+                                        </div>
+                                        <button type="submit" class="btn btn-primary">Submit</button>
+                                    </form>
+
+                                    <!-- Display nested comments recursively -->
+                                    <div class="ml-4">
+                                        @Html.Partial("_NestedComments", Model.BlogComments.Where(c => c.ParentId == comment.CommentId))
+                                    </div>
+                                </div>
+                                <a asp-action="Delete" style=" margin-top: 16px;" asp-route-id="@comment.CommentId" asp-controller="AdminBlogComments" class="waves-effect waves-circle btn btn-circle btn-danger-light btn-xs mb-3"><i class="fa fa-trash"></i></a>
+                            </div>
+                        }
+
+
+                        <!-- Add more comment sections as needed -->
+                        <!-- Add comment form -->
+                        <h4>Add Comment</h4>
+                        <form asp-action="Create" asp-controller="AdminBlogComments">
+                            <div class="form-group" style="display:none">
+
+                                <input name="CommentId" class="form-control" value="@CommentssId" />
+                                <input name="UserId" class="control-label" value="@userId" />
+                                <input name="BlogId" class="control-label" value="@Model.BlogId" />
+                                <input name="CreatedAt" class="form-control" value="@DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss")" />
+                            </div>
+
+                            <div class="form-group">
+                                <textarea name="BcommentContents" id="BcommentContents" class="form-control" rows="2" placeholder="Add your comment"></textarea>
+                                <span id="commentError" class="text-danger" style="display:none">Please enter a comment.</span>
+                            </div>
+                            <button type="submit" class="btn btn-primary">Add Comment</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="fixed-content">
+                <div style="display:flex;justify-content:space-around">
+                    <div class="text-center">
+                        <a asp-action="Details" asp-route-id="@Model?.BlogId" class="waves-effect waves-circle btn btn-circle btn-success-light mb-3"><i class="fa fa-eye"></i></a>
+                        <small class="d-block">View</small>
+                    </div>
+                    <div class="text-center">
+                        <a asp-action="Edit" asp-route-id="@Model?.BlogId" class="waves-effect waves-circle btn btn-circle btn-primary-light mb-3">
+                            <i class="fa fa-edit"></i>
+                        </a>
+                        <small class="d-block">Edit</small>
+                    </div>
+                    <div class="text-center">
+                        <a asp-action="Delete" asp-route-id="@Model?.BlogId" class="waves-effect waves-circle btn btn-circle btn-danger-light mb-3"><i class="fa fa-trash"></i></a>
+                        <small class="d-block">Delete</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha384-KyT/jj4gqwc7e0nplcudA44OISmf+4W5C0d3x+ywe5W2H79xCX0iiuK4CfHcZ84d" crossorigin="anonymous"></script>
+    <script>
+        $(document).ready(function () {
+            $(".toggle-reply").click(function () {
+                $(this).next(".reply-form").toggle();
+            });
+
+            $('form').submit(function (event) {
+                var comment = $(this).find('textarea[name="BcommentContents"]').val();
+                if (!comment) {
+                    event.preventDefault(); // Prevent form submission
+                    $('#commentError').show(); // Display the error message
+                }
+            });
+
+            $('.reply-form').submit(function (event) {
+                var comment = $(this).find('textarea').val();
+                if (!comment) {
+                    event.preventDefault(); // Prevent form submission
+                    $(this).find('.text-danger').show(); // Display the error message
+                }
+            });
+            // Check if the user has liked the blog on page load
+            $.ajax({
+                url: '/AdminBlogLikes/CheckLikeStatus', // Replace with the appropriate endpoint URL to check like status
+                method: 'GET',
+                data: { UserId: '@userId',
+                    BlogId: '@Model.BlogId',                  
+
+                },
+                success: function (response) {
+                    var isLiked = response.isLiked;
+
+                    // Update the button color based on the like status
+                    if (isLiked) {
+                        // Liked, change the button color to red
+
+                        $('#likeButton').addClass('red');
+
+
+                    } else {
+                        // Not liked, remove the red color
+                        $('#likeButton').removeClass('red');
+                     
+                    }
+                },
+                error: function (xhr, status, error) {
+                    // Handle the error response
+                    // You can display an error message or perform any other error handling here
+                }
+            });
+
+            // Handle click event on the like button
+            $('#likeButton').on('click', function (event) {
+                event.preventDefault(); // Prevent the default behavior of following the href
+
+                var isLiked = $('#likeButton').hasClass('red');
+                console.log(isLiked)
+                var likeCountElement = $('#likeCount');
+                var updatedLikeCount = parseInt(likeCountElement.text());
+
+
+
+
+                // Make the AJAX request to toggle the like status
+                $.ajax({
+                    url: '/AdminBlogLikes/ToggleLike', // Replace with the appropriate endpoint URL to toggle like status
+                    method: 'GET',
+                    data: {
+                        isLiked: isLiked,
+                        LikeId: '@Likedids',
+                        UserId: '@userId',
+                        BlogId: '@Model.BlogId',
+                        LikedAt: '@DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss")'
+
+                    },
+                    success: function (response) {
+                        if (response.isLiked) {
+                            // Liked, change the button color to red
+                            $('#likeButton').addClass('red');
+
+                            console.log("red is added")
+                            // Increment the like count
+                            updatedLikeCount++;
+                        } else {
+                            // Not liked, remove the red color
+                            $('#likeButton').removeClass('red');
+                            console.log("red is removed")
+                            // Decrement the like count
+                            updatedLikeCount--;
+                        }
+
+                        // Update the UI with the new like count
+                        likeCountElement.text(updatedLikeCount);
+                    },
+                    error: function (xhr, status, error) {
+                        // Handle the error response
+                        // You can display an error message or perform any other error handling here
+                    }
+                });
+            });
+
+        });
+    </script>
+    <script>
+       
+        var commentLink = document.getElementById('commentLink');
+        var commentsContainer = document.getElementById('commentsContainer');
+
+        // Add a click event listener to the link
+        commentLink.addEventListener('click', function (event) {
+            event.preventDefault(); // Prevent the default link behavior
+
+            // Scroll to the comments container
+            commentsContainer.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        });
+    </script>
+
+}
+
+
+

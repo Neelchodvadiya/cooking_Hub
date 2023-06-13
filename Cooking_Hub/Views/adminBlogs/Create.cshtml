@@ -1,0 +1,95 @@
+﻿@using Cooking_Hub.Data;
+@using Microsoft.AspNetCore.Identity;
+@model Cooking_Hub.Models.Blog
+@inject UserManager<CookingHubUser> UserManager
+
+@{
+    ViewData["Title"] = "Create";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h1>Create</h1>
+
+<h4>Blog</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Create">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group" style="display:none;">
+                @Html.HiddenFor(model => model.BlogId)
+                <label asp-for="BlogId" class="control-label"></label>
+                <input asp-for="BlogId" class="form-control" />
+                <span asp-validation-for="BlogId" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="CategoryId" class="control-label"></label>
+                <select asp-for="CategoryId" class="form-control" asp-items="ViewBag.CategoryId"></select>
+            </div>
+            <div class="form-group" >
+                <label asp-for="UserId" class="control-label"></label>
+                <label asp-for="UserId" class="control-label"></label>
+                <select asp-for="UserId" class="form-control" asp-items="ViewBag.UserId"></select>
+            </div>
+           
+                <label asp-for="BlogTitle" class="control-label"></label>
+                <input asp-for="BlogTitle" class="form-control" />
+                <span asp-validation-for="BlogTitle" class="text-danger"></span>
+   
+            <div class="form-group" style="width:150%" >
+                <label asp-for="BlogshortDescription" class="control-label"></label>
+                <input asp-for="BlogshortDescription" class="form-control" />
+                <span asp-validation-for="BlogshortDescription" class="text-danger"></span>
+            </div>
+            <div class="form-group" style="width:180%">
+                <label asp-for="BlogContents" class="control-label"></label>
+                <textarea id="editor" name="BlogContents"></textarea>
+                <span asp-validation-for="BlogContents" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="BlogImage" class="control-label"></label>
+                <input asp-for="BlogImage" class="form-control" />
+                <span asp-validation-for="BlogImage" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="BlogIsActive" class="control-label"></label>
+                <input asp-for="BlogIsActive" class="form-control" />
+                <span asp-validation-for="BlogIsActive" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="CreatedAt" class="control-label"></label>
+                <input asp-for="CreatedAt" class="form-control" />
+                <span asp-validation-for="CreatedAt" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="UpdatedAt" class="control-label"></label>
+                <input asp-for="UpdatedAt" class="form-control" />
+                <span asp-validation-for="UpdatedAt" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Create" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+
+
+@section Scripts {  
+    <link href="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote-bs4.css" rel="stylesheet">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote-bs4.min.js"></script>
+      @*  https://summernote.org/getting-started/*@
+    <script>
+        $(document).ready(function () {
+            $('#editor').summernote({
+                placeholder: 'Hello stand alone ui',
+               
+                // set focus to editable area after initializing summernote
+            });
+        });
+    </script>
+}

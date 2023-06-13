@@ -15,6 +15,8 @@ public partial class Recipe
 
     public string CuisineId { get; set; } = null!;
 
+    public string? RecipeshortDescription { get; set; }
+
     public string? RecipeDescription { get; set; }
 
     public TimeSpan? PreparationTime { get; set; }

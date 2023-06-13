@@ -122,10 +122,11 @@ public partial class CookingHubContext : DbContext
         {
             entity.ToTable("Blog");
 
-            entity.Property(e => e.BlogContents).IsUnicode(false);
+            entity.Property(e => e.BlogContents).HasColumnType("text");
             entity.Property(e => e.BlogTitle)
                 .HasMaxLength(255)
                 .IsUnicode(false);
+            entity.Property(e => e.BlogshortDescription).HasColumnType("text");
             entity.Property(e => e.CategoryId).HasMaxLength(450);
             entity.Property(e => e.CreatedAt).HasColumnType("datetime");
             entity.Property(e => e.UpdatedAt).HasColumnType("datetime");
@@ -229,9 +230,11 @@ public partial class CookingHubContext : DbContext
             entity.Property(e => e.CategoryId).HasMaxLength(450);
             entity.Property(e => e.CreatedAt).HasColumnType("datetime");
             entity.Property(e => e.CuisineId).HasMaxLength(450);
+            entity.Property(e => e.RecipeDescription).HasColumnType("text");
             entity.Property(e => e.RecipeTitle)
                 .HasMaxLength(255)
                 .IsUnicode(false);
+            entity.Property(e => e.RecipeshortDescription).HasColumnType("text");
             entity.Property(e => e.UpdatedAt).HasColumnType("datetime");
             entity.Property(e => e.UserId).HasMaxLength(450);
 

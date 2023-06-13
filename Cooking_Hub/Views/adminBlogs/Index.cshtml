@@ -1,0 +1,110 @@
+﻿@*@model IEnumerable<Cooking_Hub.Models.Blog>*@
+@model PaginatedList<BlogViewModel>
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@{
+    int pageSize = 2; // Number of items to display per page
+    int pageNumber = ViewBag.PageNumber ?? 1; // Current page number
+}
+
+
+<div class="container-full">
+    <!-- Content Header (Page header) -->
+    <div class="content-header">
+        <div class="content-header">
+            <div class="d-flex align-items-center">
+                <div class="me-auto">
+                    <h4 class="page-title">Blog List</h4>
+                    <h4 class="page-title"><a class="btn btn-success" asp-action="Create">Create New</a></h4>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <section class="content">
+        <div class="row">
+            @foreach (var blog in Model)
+            {
+            <div class="col-md-4">
+                <div class="box overflow-hidden">
+                    <figure class="img-hov-zoomin mb-0">
+                            @if (string.IsNullOrEmpty(blog.BlogImage))
+                            {
+                                <img src="~/Admin/images/gallery/thumb/2.jpg" alt="...">
+                            }
+                            else{
+
+                                <img style="    max-height: 244px;
+    min-width: 367px;
+    max-width: 367px;" src="~/userimage/@blog.BlogImage" alt="...">
+                                
+                            }
+
+                    </figure>
+                    <div class="box-body">
+                        <h4 style="min-height: 43.2px;overflow: hidden;
+                            display: -webkit-box;
+                            -webkit-line-clamp: 2;
+                            -webkit-box-orient: vertical;">
+                                <a href="#">@blog.BlogTitle</a>
+                        </h4>
+                            <p>@blog.CreatedAt</p>
+                       <div style="min-height: 105px;
+                                max-height: 105px;
+                            overflow: hidden;
+                            display: -webkit-box;
+                            -webkit-line-clamp: 5;
+                            -webkit-box-orient: vertical;">
+                            @Html.Raw(blog.BlogShortDescription)
+                        </div>
+                        <div class="flexbox align-items-center mt-3">
+                            <a class="btn btn-sm btn-bold btn-primary" href="#">Read more</a>
+                            <div class="gap-items-4" style="display:flex">
+                                    <div class="text-center mx-5">
+                                        <a asp-action="Details" asp-route-id="@blog.BlogId" class="waves-effect waves-circle btn btn-circle btn-success-light btn-xs mb-5"><i class="fa fa-eye"></i></a>
+
+                                    </div>
+                                    <div class="text-center mx-5">
+                                        <a asp-action="Edit" asp-route-id="@blog.BlogId" class="waves-effect waves-circle btn btn-circle btn-primary-light btn-xs mb-5"><i class="fa fa-edit"></i></a>
+
+                                    </div>
+                                    <div class="text-center mx-5">
+                                        <a asp-action="Delete" asp-route-id="@blog.BlogId" class="waves-effect waves-circle btn btn-circle btn-danger-light btn-xs  mb-5"><i class="fa fa-trash"></i></a>
+
+                                    </div>
+                                    
+                                    <a class="text-muted" style="margin-top: 5px;">
+                                        <i class="fa fa-heart me-1"></i> @blog.TotalLikes
+                                </a>
+                                    <a class="text-muted" style="margin-top: 5px;">
+                                        <i class="fa fa-comment me-1"></i> @blog.TotalComments
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            }
+         
+        </div>
+
+    </section>
+</div>
+
+
+
+<a asp-action="Index"
+   asp-route-searchString="@ViewBag.SearchString"
+   asp-route-pageNumber="@(Model.PageIndex - 1)"
+   class="btn btn-default @(Model.HasPreviousPage ? "" : "disabled")">
+    Previous
+</a>
+<a asp-action="Index"
+   asp-route-searchString="@ViewBag.SearchString"
+   asp-route-pageNumber="@(Model.PageIndex + 1)"
+   class="btn btn-default @(Model.HasNextPage ? "" : "disabled")">
+    Next
+</a>

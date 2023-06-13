@@ -47,6 +47,7 @@ namespace Cooking_Hub.Controllers.Admin
                     users = users.Where(u => u.IsActive == false);
                 }
             }
+           
             if (!String.IsNullOrEmpty(searchString))
             {
                 users = users.Where(s =>
@@ -363,10 +364,22 @@ namespace Cooking_Hub.Controllers.Admin
             var aspNetUser = await _context.AspNetUsers.FindAsync(id);
             if (aspNetUser != null)
             {
-                _context.AspNetUsers.Remove(aspNetUser);
+                try
+                {
+                    _context.AspNetUsers.Remove(aspNetUser);
+                    await _context.SaveChangesAsync();
+                    // Code to execute if the deletion is successful
+                }
+                catch (Exception ex)
+                {
+                    // Code to handle the exception and redirect to the confirmation page
+                    // You can customize this code to fit your application's needs
+                    return RedirectToAction(nameof(Delete));
+
+                }
             }
             
-            await _context.SaveChangesAsync();
+           
             return RedirectToAction(nameof(Index));
         }
 
