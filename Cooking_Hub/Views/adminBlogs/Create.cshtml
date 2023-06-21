@@ -6,76 +6,133 @@
 @{
     ViewData["Title"] = "Create";
     Layout = "~/Views/Shared/_Layout.cshtml";
+    string userId = UserManager.GetUserId(User);
 }
 
 <h1>Create</h1>
+<style>
+    .image-upload {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        border: 2px dashed #ccc;
+        border-radius: 10px;
+        padding: 20px;
+        text-align: center;
+    }
 
-<h4>Blog</h4>
-<hr />
-<div class="row">
-    <div class="col-md-4">
-        <form asp-action="Create">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="form-group" style="display:none;">
-                @Html.HiddenFor(model => model.BlogId)
-                <label asp-for="BlogId" class="control-label"></label>
-                <input asp-for="BlogId" class="form-control" />
-                <span asp-validation-for="BlogId" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="CategoryId" class="control-label"></label>
-                <select asp-for="CategoryId" class="form-control" asp-items="ViewBag.CategoryId"></select>
-            </div>
-            <div class="form-group" >
-                <label asp-for="UserId" class="control-label"></label>
-                <label asp-for="UserId" class="control-label"></label>
-                <select asp-for="UserId" class="form-control" asp-items="ViewBag.UserId"></select>
-            </div>
-           
-                <label asp-for="BlogTitle" class="control-label"></label>
-                <input asp-for="BlogTitle" class="form-control" />
-                <span asp-validation-for="BlogTitle" class="text-danger"></span>
-   
-            <div class="form-group" style="width:150%" >
-                <label asp-for="BlogshortDescription" class="control-label"></label>
-                <input asp-for="BlogshortDescription" class="form-control" />
-                <span asp-validation-for="BlogshortDescription" class="text-danger"></span>
-            </div>
-            <div class="form-group" style="width:180%">
-                <label asp-for="BlogContents" class="control-label"></label>
-                <textarea id="editor" name="BlogContents"></textarea>
-                <span asp-validation-for="BlogContents" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="BlogImage" class="control-label"></label>
-                <input asp-for="BlogImage" class="form-control" />
-                <span asp-validation-for="BlogImage" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="BlogIsActive" class="control-label"></label>
-                <input asp-for="BlogIsActive" class="form-control" />
-                <span asp-validation-for="BlogIsActive" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="CreatedAt" class="control-label"></label>
-                <input asp-for="CreatedAt" class="form-control" />
-                <span asp-validation-for="CreatedAt" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="UpdatedAt" class="control-label"></label>
-                <input asp-for="UpdatedAt" class="form-control" />
-                <span asp-validation-for="UpdatedAt" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-primary" />
-            </div>
-        </form>
-    </div>
-</div>
+        .image-upload label {
+            margin-bottom: 10px;
+        }
+
+            .image-upload label i {
+                font-size: 48px;
+            }
+
+            .image-upload label span {
+                font-size: 16px;
+                font-weight: bold;
+                color: #666;
+            }
+
+        .image-upload input[type="file"] {
+            display: none;
+        }
+
+    .preview-image {
+        display: none;
+        max-width: 300px;
+        max-height: 300px;
+        margin-top: 20px;
+    }
+
+</style>
+
 
 <div>
     <a asp-action="Index">Back to List</a>
 </div>
+<div class="container">
+    <div class="row">
+        <div class="col-md-9">
+            <div class="card">
+                <div class="card-body">
+                    <h2 class="card-title">Create Blog</h2>
+                    <form  asp-action="Create" enctype="multipart/form-data">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label asp-for="CategoryId" class="control-label"></label>
+                                    <select asp-for="CategoryId" class="form-control" asp-items="ViewBag.CategoryId"></select>
+                                </div>
+                            </div>
+                            <div class="col-md-6" style="display:none">
+                                @Html.HiddenFor(model => model.BlogId)
+                                <input asp-for="BlogId" class="form-control" />
+                                <input asp-for="UserId" class="form-control" value="@userId" />
+                                <input asp-for="CreatedAt" class="form-control" value="@DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss")" />
+                                <input asp-for="UpdatedAt" class="form-control" value="@DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss")" />
+
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">                                  
+                                    <label for="blogTitle">Blog Title</label>                                   
+                                    <textarea type="text" maxlength="100" asp-for="BlogTitle" class="form-control"></textarea>
+                                    <span asp-validation-for="BlogTitle" class="text-danger"></span>
+                                </div>
+                            </div>
+                            <div class="col-md-8">
+                                <div class="form-group">
+                                    <label for="blogShortDescription">Short Description</label>
+                                    <textarea asp-for="BlogshortDescription" maxlength="300" class="form-control"></textarea>
+                                    <span asp-validation-for="BlogshortDescription" class="text-danger"></span>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <div class="custom-control custom-checkbox" style="margin-top: 26px; margin-left: 14px;">
+                                        <label asp-for="BlogIsActive" class="control-label"></label>
+                                        <input type="hidden" name="BlogIsActive" value="true">
+                                        <label class="switch">
+                                            <input type="checkbox" id="toggle-switch" name="BlogIsActive" value="true" checked>
+                                            <span class="switch-indicator"></span>
+                                        </label>
+                                        <span asp-validation-for="BlogIsActive" class="text-danger"></span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-12 image-upload">
+                                <label for="upload-input">
+                                    <i class="fas fa-cloud-upload-alt"></i>
+                                    <span>Upload Image</span>
+                                </label>
+                                <input id="upload-input" type="file" name="photo" accept="image/*">
+                                <img id="preview-image" src="#" alt="Preview" class="preview-image">
+                            </div>
+                                                                                
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label for="blogContents">Contents</label>
+                                    <textarea class="form-control" id="editor" name="BlogContents"></textarea>
+                                    <span asp-validation-for="BlogContents" class="text-danger"></span>
+                                </div>
+                            </div>
+                          
+                            <div class="col-md-12">
+                                <button type="submit" class="btn btn-primary">Create</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
 
 
 @section Scripts {  
@@ -90,6 +147,40 @@
                
                 // set focus to editable area after initializing summernote
             });
+        });
+        // Get the input element and the preview image element
+        var input = document.getElementById('upload-input');
+        var previewImage = document.getElementById('preview-image');
+
+        // Add an event listener to the input element
+        input.addEventListener('change', function (event) {
+            var file = event.target.files[0]; // Get the selected file
+
+            if (file) {
+                // Create a FileReader object to read the file
+                var reader = new FileReader();
+
+                // Set up the FileReader onload event
+                reader.onload = function () {
+                    previewImage.src = reader.result; // Set the source of the preview image to the FileReader result
+                    previewImage.style.display = 'block'; // Display the preview image
+                };
+
+                // Read the file as a data URL
+                reader.readAsDataURL(file);
+            } else {
+                previewImage.src = '#'; // Clear the source of the preview image
+                previewImage.style.display = 'none'; // Hide the preview image
+            }
+        });
+
+    </script>
+    <script>
+        var checkbox = document.getElementById('toggle-switch');
+        var hiddenInput = document.querySelector('input[name="IsActive"]');
+
+        checkbox.addEventListener('change', function () {
+            hiddenInput.value = checkbox.checked ? 'true' : 'false';
         });
     </script>
 }

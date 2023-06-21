@@ -61,17 +61,41 @@ namespace Cooking_Hub.Controllers.Admin
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create( BlogComment blogComment)
+        public async Task<IActionResult> Create(BlogComment blogComment)
         {
-            
-                _context.Add(blogComment);
-                await _context.SaveChangesAsync();
-                return RedirectToAction("Details", "adminBlogs", new { id = blogComment.BlogId });
-           
-        }
 
-        // GET: AdminBlogComments/Edit/5
-        public async Task<IActionResult> Edit(string id)
+            _context.Add(blogComment);
+            await _context.SaveChangesAsync();
+            return RedirectToAction("Details", "adminBlogs", new { id = blogComment.BlogId });
+
+        }
+		public async Task<IActionResult> CreateRecipecomment(RecipeReview recipeReview)
+		{
+
+			_context.Add(recipeReview);
+			await _context.SaveChangesAsync();
+			return RedirectToAction("Details", "AdminRecipes", new { id = recipeReview.RecipeId });
+
+		}
+		public async Task<IActionResult> RecipecommentDelete(string id)
+		{
+			if (_context.RecipeReviews == null)
+			{
+				return Problem("Entity set 'CookingHubContext.RecipeReviews'  is null.");
+			}
+			var recipeReviewss = await _context.RecipeReviews.FindAsync(id);
+			if (recipeReviewss != null)
+			{
+				_context.RecipeReviews.Remove(recipeReviewss);
+			}
+
+			await _context.SaveChangesAsync();
+			return RedirectToAction("Details", "AdminRecipes", new { id = recipeReviewss.RecipeId });
+		}
+
+
+		// GET: AdminBlogComments/Edit/5
+		public async Task<IActionResult> Edit(string id)
         {
             if (id == null || _context.BlogComments == null)
             {

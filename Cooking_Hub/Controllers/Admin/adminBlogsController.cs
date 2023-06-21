@@ -9,6 +9,8 @@ using Cooking_Hub.Models;
 using Microsoft.AspNetCore.Authorization;
 using System.Data;
 using System.Drawing.Printing;
+using Microsoft.Extensions.Hosting;
+using Microsoft.AspNetCore.Identity;
 
 namespace Cooking_Hub.Controllers.Admin
 {
@@ -16,10 +18,12 @@ namespace Cooking_Hub.Controllers.Admin
     public class adminBlogsController : Controller
     {
         private readonly CookingHubContext _context;
+        private readonly IWebHostEnvironment hostEnvironment;
 
-        public adminBlogsController(CookingHubContext context)
+        public adminBlogsController(CookingHubContext context, IWebHostEnvironment hostEnvironment)
         {
             _context = context;
+            this.hostEnvironment = hostEnvironment;
         }
 
         // GET: adminBlogs
@@ -43,9 +47,12 @@ namespace Cooking_Hub.Controllers.Admin
 
 
                 blogs = blogs.Where(b =>
-                         (b.BlogshortDescription.ToLower().Contains(searchString.ToLower()) ||
-                          b.BlogContents.ToLower().Contains(searchString.ToLower()) ||
-                         (searchActive.HasValue && b.BlogIsActive == searchActive.Value)));
+                            (EF.Functions.Like(b.BlogshortDescription, $"%{searchString}%") ||
+                            EF.Functions.Like(b.BlogContents, $"%{searchString}%") ||
+                            EF.Functions.Like(b.BlogTitle.ToLower(), $"%{searchString.ToLower()}%")) ||
+                            (searchActive.HasValue && b.BlogIsActive == searchActive.Value)
+                        );
+
             }
 
             var blogComments = _context.BlogComments.GroupBy(bc => bc.BlogId)
@@ -56,9 +63,9 @@ namespace Cooking_Hub.Controllers.Admin
                 .Select(g => new { BlogId = g.Key, TotalLikes = g.Count() })
                 .ToList();
 
-            int pageSize = 2;
+            int pageSize = 9;
             var viewModel = await PaginatedList<BlogViewModel>.CreateAsync(blogs
-                .OrderByDescending(u => u.CreatedAt)
+                .OrderByDescending(u => u.UpdatedAt)
                 .Select(blog => new BlogViewModel
                 {
                     BlogId = blog.BlogId,
@@ -129,11 +136,29 @@ namespace Cooking_Hub.Controllers.Admin
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(Blog blog)
+        public async Task<IActionResult> Create(Blog blog, IFormFile photo)
         {
-            
+            if (photo == null)
+            {
+                ModelState.AddModelError("ImageFilePath", "Please Select Image");
+            }
+            if (photo != null)
+            {
+                string filename = Path.GetFileName(photo.FileName);
+                string uniqueFilename = $"{Path.GetFileNameWithoutExtension(filename)}_{DateTime.Now.Ticks}{Path.GetExtension(filename)}";
+                string filepath = Path.Combine(hostEnvironment.WebRootPath, "UserImage", uniqueFilename);
 
-                _context.Add(blog);
+                using (var stream = new FileStream(filepath, FileMode.Create))
+                {
+                    await photo.CopyToAsync(stream);
+                }
+
+                blog.BlogImage = uniqueFilename;
+
+            }
+
+
+            _context.Add(blog);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
           
@@ -153,7 +178,7 @@ namespace Cooking_Hub.Controllers.Admin
                 return NotFound();
             }
 
-            ViewData["CategoryId"] = new SelectList(_context.Categories, "CategoryId", "CategoryId", blog.CategoryId);
+            ViewData["CategoryId"] = new SelectList(_context.Categories, "CategoryId", "CategoryName", blog.CategoryId);
             ViewData["UserId"] = new SelectList(_context.AspNetUsers, "Id", "Id", blog.UserId);
             return View(blog);
         }
@@ -163,20 +188,49 @@ namespace Cooking_Hub.Controllers.Admin
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(string id, [Bind("BlogId,CategoryId,UserId,BlogTitle,BlogshortDescription,BlogContents,BlogImage,BlogIsActive,CreatedAt,UpdatedAt")] Blog blog)
+        public async Task<IActionResult> Edit(string id, Blog blog, IFormFile photo)
         {
             if (id != blog.BlogId)
             {
                 return NotFound();
             }
-
-            if (!ModelState.IsValid)
+            if (blog.BlogIsActive == null)
             {
-                try
+                blog.BlogIsActive = false;
+            }
+            if (photo == null)
+            {
+                var existingImage = await _context.Blogs.FindAsync(blog.BlogId);
+                blog.BlogImage = existingImage.BlogImage;
+               
+
+                _context.Entry(existingImage).State = EntityState.Detached;
+            }
+
+            try
                 {
-                    _context.Update(blog);
-                    await _context.SaveChangesAsync();
+                if (photo != null)
+                {
+                    string filename = Path.GetFileName(photo.FileName);
+                    string uniqueFilename = $"{Path.GetFileNameWithoutExtension(filename)}_{DateTime.Now.Ticks}{Path.GetExtension(filename)}";
+                    string filepath = Path.Combine(hostEnvironment.WebRootPath, "UserImage", uniqueFilename);
+
+                    using (var stream = new FileStream(filepath, FileMode.Create))
+                    {
+                        await photo.CopyToAsync(stream);
+                    }
+
+                    blog.BlogImage = uniqueFilename;
+
                 }
+                var existingUser = await _context.Blogs.FindAsync(blog.BlogId);
+                blog.CreatedAt = existingUser.CreatedAt;
+                _context.Entry(existingUser).State = EntityState.Detached;
+
+                _context.Update(blog);
+                    await _context.SaveChangesAsync();
+                return RedirectToAction(nameof(Index));
+            }
                 catch (DbUpdateConcurrencyException)
                 {
                     if (!BlogExists(blog.BlogId))
@@ -188,29 +242,39 @@ namespace Cooking_Hub.Controllers.Admin
                         throw;
                     }
                 }
-                return RedirectToAction(nameof(Index));
-            }
-            ViewData["CategoryId"] = new SelectList(_context.Categories, "CategoryId", "CategoryId", blog.CategoryId);
-            ViewData["UserId"] = new SelectList(_context.AspNetUsers, "Id", "Id", blog.UserId);
+              
+           
+        
             return View(blog);
         }
 
         // GET: adminBlogs/Delete/5
         public async Task<IActionResult> Delete(string id)
         {
+
             if (id == null || _context.Blogs == null)
             {
                 return NotFound();
             }
 
             var blog = await _context.Blogs
-                .Include(b => b.Category)
-                .Include(b => b.User)
-                .FirstOrDefaultAsync(m => m.BlogId == id);
+        .Include(b => b.Category)
+        .Include(b => b.User)
+        .Include(b => b.BlogComments)
+            .ThenInclude(c => c.User)
+        .Include(b => b.BlogLikes)
+        .FirstOrDefaultAsync(m => m.BlogId == id);
+
+
             if (blog == null)
             {
                 return NotFound();
             }
+            int commentCount = blog.BlogComments.Count();
+            int likeCount = blog.BlogLikes.Count();
+
+            ViewBag.CommentCount = commentCount;
+            ViewBag.LikeCount = likeCount;
 
             return View(blog);
         }
@@ -227,9 +291,17 @@ namespace Cooking_Hub.Controllers.Admin
             var blog = await _context.Blogs.FindAsync(id);
             if (blog != null)
             {
+                // Remove all comments associated with the blog
+                var blogComments = _context.BlogComments.Where(bc => bc.BlogId == id);
+                _context.BlogComments.RemoveRange(blogComments);
+
+                // Remove all likes associated with the blog
+                var blogLikes = _context.BlogLikes.Where(bl => bl.BlogId == id);
+                _context.BlogLikes.RemoveRange(blogLikes);
                 _context.Blogs.Remove(blog);
             }
-            
+          
+
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }

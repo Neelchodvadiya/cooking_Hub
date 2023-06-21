@@ -1,0 +1,65 @@
+﻿@model Cooking_Hub.Models.Contact
+
+@{
+    ViewData["Title"] = "Details";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+
+<div class="card col-md-9">
+    <div class="card-header">
+        Contact Us Information
+    </div>
+    <div class="card-body">
+        <div class="row" style="margin-top:10px">
+            <div class="col-md-2">
+                <strong>Name:</strong>
+            </div>
+            <div class="col-md-8">
+                @Html.DisplayFor(model => model.ContactName)
+            </div>
+        </div>
+        <div class="row" style="margin-top:10px">
+            <div class="col-md-2">
+                <strong>Email:</strong>
+            </div>
+            <div class="col-md-8">
+                @Html.DisplayFor(model => model.ContactEmail)
+            </div>
+        </div>
+        <div class="row" style="margin-top:10px">
+            <div class="col-md-2">
+                <strong>Subject:</strong>
+            </div>
+            <div class="col-md-8">
+                @Html.DisplayFor(model => model.ContactSubject)
+            </div>
+        </div>
+        <div class="row" style="margin-top:10px">
+            <div class="col-md-2">
+                <strong>Message:</strong>
+            </div>
+            <div class="col-md-8">
+                @Html.DisplayFor(model => model.ContactMessage)
+            </div>
+        </div>
+        <div class="row" style="margin-top:10px">
+            <div class="col-md-2">
+                <strong>Created At:</strong>
+            </div>
+            <div class="col-md-8">
+                @Html.DisplayFor(model => model.CreatedAt)
+            </div>
+        </div>
+        <div class="row" style="margin-top:10px">
+            <a asp-action="Delete" asp-route-id="@Model?.ContactId" class="waves-effect waves-circle btn btn-circle btn-danger-light  mb-5"><i class="fa fa-trash"></i></a> 
+
+            <a style="margin-left: 20px" asp-action="Index" class="waves-effect waves-circle btn btn-circle btn-primary-light mb-5"> <i class="fas fa-arrow-left"></i>  </a>
+
+        </div>
+    </div>
+</div>
+
+
+

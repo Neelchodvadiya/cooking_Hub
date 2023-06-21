@@ -5,7 +5,23 @@
     ViewData["Title"] = "Login";
     ViewData["Title Description"] = "Login Page";
 }
-
+<section class="inner-page-banner bg-common" data-bg-image="/img/figure/inner-page-banner1.jpg">
+    <div class="container">
+        <div class="row">
+            <div class="col-12">
+                <div class="breadcrumbs-area">
+                    <h1 class="h1-overss">@ViewData["Title Description"]</h1>
+                    <ul>
+                        <li>
+                            <a asp-controller="Home" asp-action="Index">Home</a>
+                        </li>
+                        <li>@ViewData["Title"]</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
 <div class="modal fade" id="myModal" role="dialog">
     <div class="modal-dialog">
         <div class="modal-content">
@@ -51,7 +67,9 @@
         </div>
     </div>
 </div>
-
+<div style="margin-top: 305px;">
+    
+</div>
 @*<div class="row">
     <div class="col-md-4">
         <section>
@@ -126,4 +144,9 @@
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
+    <script>
+        $(document).ready(function () {
+            $('#myModal').modal('show');
+        });
+    </script>
 }

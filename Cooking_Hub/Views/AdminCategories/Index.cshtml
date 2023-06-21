@@ -41,6 +41,42 @@
 }
 else
 {
+	<style>
+		.pagination {
+			display: flex;
+			margin-top: 20px;
+		}
+
+		.pagination-list {
+			list-style: none;
+			padding: 0;
+			margin: 0;
+		}
+
+			.pagination-list li {
+				display: inline-block;
+				margin-right: 5px;
+			}
+
+		.current-page {
+			display: inline-block;
+			background-color: #4c95dd;
+			color: white;
+			padding: 5px 10px;
+		}
+
+		.pagination-list a {
+			display: inline-block;
+			padding: 5px 10px;
+			text-decoration: none;
+			color: black;
+			border: 1px solid #ccc;
+		}
+
+			.pagination-list a:hover {
+				background-color: #eee;
+			}
+	</style>
 	<div class="container-full">
 		<!-- Content Header (Page header) -->
 		<div class="content-header">
@@ -104,19 +140,23 @@ else
 		<!-- /.content -->
 
 	</div>
-	<a asp-action="Index"
-   asp-route-searchString="@ViewBag.SearchString"
-   asp-route-pageNumber="@(Model.PageIndex - 1)"
-	   class="btn btn-default @(Model.HasPreviousPage ? "" : "disabled")">
-		Previous
-	</a>
-	<a asp-action="Index"
-   asp-route-searchString="@ViewBag.SearchString"
-   asp-route-pageNumber="@(Model.PageIndex + 1)"
-	   class="btn btn-default @(Model.HasNextPage ? "" : "disabled")">
-		Next
-	</a>
-	
+	<div class="pagination">
+		<ul class="pagination-list">
+			@for (int i = 1; i <= Model.TotalPages; i++)
+			{
+				<li>
+					@if (i == Model.PageIndex)
+					{
+						<span class="current-page">@i</span>
+					}
+					else
+					{
+						<a href="?pageNumber=@i">@i</a>
+					}
+				</li>
+			}
+		</ul>
+	</div>
 
 }
 <script>

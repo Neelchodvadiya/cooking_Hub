@@ -5,6 +5,8 @@
         public string BlogId { get; set; }
         public string BlogTitle { get; set; }
         public string BlogShortDescription { get; set; }
+
+        public string? Blogcategory { get; set; }
         public string BlogImage { get; set; }
         public bool? BlogIsActive { get; set; }
         public DateTime? CreatedAt { get; set; }

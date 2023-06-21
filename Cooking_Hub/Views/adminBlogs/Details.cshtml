@@ -20,7 +20,7 @@
         <div class="col-md-9">
             <div class="scrollable-content" style="max-height: 500px; overflow-y: auto;">
                 <div class="card bg-white">
-                    <img src="~/img/blog/blog9.jpg" alt="Blog Image" class="card-img-top">
+                    <img src="~/UserImage/@Model.BlogImage" alt="Blog Image" class="card-img-top">
                     <div class="card-body">
                         <ul class="entry-meta" style="display:flex">
                             <a><i class="fas fa-clock"></i>&nbsp;&nbsp;&nbsp;@Model.CreatedAt</a> &nbsp; &nbsp;&nbsp;&nbsp;
@@ -31,11 +31,12 @@
                         <h2 class="card-title"> @Html.Raw(Model.BlogTitle)</h2>
                         <p class="card-text"> @Html.Raw(Model.BlogshortDescription)</p>
                         <h4>Blog Content</h4>
-                        <div class="scrollable" style="max-height: 300px; overflow-y: auto;">
+                        <div style="overflow:hidden" >
+
                             @Html.Raw(Model.BlogContents)
                             <!-- Add more blog content here -->
                         </div>
-                        <h4>Comments</h4>
+                        <h4 style="margin-top:20px">Comments</h4>
                         @foreach (var comment in Model.BlogComments.Where(c => c.ParentId == null))
                         {
                             <div class="media mb-3">
@@ -75,7 +76,10 @@
 
                         <!-- Add more comment sections as needed -->
                         <!-- Add comment form -->
-                        <h4>Add Comment</h4>
+                        <div id="commentsContainer">
+                            <h4>Add Comment</h4>
+                        </div>
+                       
                         <form asp-action="Create" asp-controller="AdminBlogComments">
                             <div class="form-group" style="display:none">
 

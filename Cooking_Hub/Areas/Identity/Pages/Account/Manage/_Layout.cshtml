@@ -1,4 +1,5 @@
-﻿@{
+﻿
+@{
     if (ViewData.TryGetValue("ParentLayout", out var parentLayout) && parentLayout !=  null)
     {
         Layout = parentLayout.ToString();
@@ -6,23 +7,63 @@
     else
     {
         Layout = "/Areas/Identity/Pages/_Layout.cshtml";
+		ViewData["Title Description"] = "Manage Account Page";
     }
 }
 
-<h1>Manage your account</h1>
+<section class="inner-page-banner bg-common" data-bg-image="/img/figure/inner-page-banner1.jpg">
+	<div class="container">
+		<div class="row">
+			<div class="col-12">
+				<div class="breadcrumbs-area">
+					<h1 class="h1-overss">@ViewData["Title Description"]</h1>
+					<ul>
+						<li>
+							<a asp-controller="Home" asp-action="Index">Home</a>
+						</li>
+						<li>@ViewData["Title"]</li>
+					</ul>
+				</div>
+			</div>
+		</div>
+	</div>
+</section>
+<!-- Main content -->
+<section class="content">
 
-<div>
-    <h2>Change your account settings</h2>
-    <hr />
-    <div class="row">
-        <div class="col-md-3">
-            <partial name="_ManageNav" />
-        </div>
-        <div class="col-md-9">
-            @RenderBody()
-        </div>
-    </div>
-</div>
+	<!-- tabs -->
+
+	<div class="row">
+		<div class="col-md-3">
+			</div>
+		<div class="col-9">
+			<div class="box">
+				<div class="box-header with-border">
+					<h4 class="box-title">Vertical Tab</h4>
+					<h6 class="box-subtitle">Use default tab with class <code>vtabs & tabs-vertical</code></h6>
+				</div>
+				<!-- /.box-header -->
+				<div class="box-body">
+					<!-- Nav tabs -->
+					<div class="vtabs">
+						<div class="col-md-3">
+						
+							<partial name="_ManageNav" />
+					
+						</div>
+						<!-- Tab panes -->
+						<div class="tab-content col-md-9">
+							@RenderBody()
+						</div>
+					</div>
+				</div>
+				<!-- /.box-body -->
+			</div>
+			<!-- /.box -->
+		</div>
+		<!-- /.col -->
+	</div>
+</section>
 
 @section Scripts {
     @RenderSection("Scripts", required: false)

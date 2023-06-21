@@ -1,118 +1,381 @@
-﻿@model Cooking_Hub.Models.Recipe
+﻿@using Cooking_Hub.Data;
+@using Microsoft.AspNetCore.Identity;
+@model Cooking_Hub.Models.Recipe
+@inject UserManager<CookingHubUser> UserManager
+
 
 @{
     ViewData["Title"] = "Delete";
     Layout = "~/Views/Shared/_Layout.cshtml";
+	string userId = UserManager.GetUserId(User);
+
+	var ingredientData = ViewData["IngredientData"] as string;
+	var nutritionData = ViewData["NutritionData"] as string;
+
 }
 
-<h1>Delete</h1>
 
-<h3>Are you sure you want to delete this?</h3>
-<div>
-    <h4>Recipe</h4>
-    <hr />
-    <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.RecipeTitle)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.RecipeTitle)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.RecipeshortDescription)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.RecipeshortDescription)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.RecipeDescription)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.RecipeDescription)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.PreparationTime)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.PreparationTime)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.CookingTime)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.CookingTime)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Serving)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Serving)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Views)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Views)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Ingridients)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Ingridients)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Nutrition)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Nutrition)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.RecipeImage)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.RecipeImage)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.IsActive)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.IsActive)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.CreatedAt)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.CreatedAt)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.UpdatedAt)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.UpdatedAt)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Category)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Category.CategoryId)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Cuisine)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Cuisine.CuisineId)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.User)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.User.Id)
-        </dd>
-    </dl>
-    
-    <form asp-action="Delete">
-        <input type="hidden" asp-for="RecipeId" />
-        <input type="submit" value="Delete" class="btn btn-danger" /> |
-        <a asp-action="Index">Back to List</a>
-    </form>
+<style>
+	.raiting a.vote {
+		color: yellow; /* Change this to the desired color */
+	}
+
+	.votes {
+		color: #f1c40f;
+	}
+
+	.b1:hover ~ a,
+	.b2:hover ~ a,
+	.b3:hover ~ a,
+	.b4:hover ~ a {
+		color: #f1c40f;
+	}
+</style>
+
+<div class="container-full">
+	<h1>Are you sure you want to Delete ?</h1>
+	<!-- Content Header (Page header) -->
+	<div class="content-header">
+		<div class="d-flex align-items-center">
+			<div class="me-auto">
+				<h4 class="page-title">Delete</h4>
+				<div class="d-inline-block align-items-center">
+					
+				</div>
+			</div>
+
+		</div>
+	</div>
+
+	<!-- Main content -->
+	<section class="content">
+
+		<div class="row">
+			<div class="col-lg-9">
+				<div class="box">
+					<div class="box-body">
+						<div class="row">
+							<div class="col-md-4 col-sm-6">
+								<div class="box box-body b-1 text-center no-shadow">
+									<img src="~/UserImage/@Model.RecipeImage" id="product-image" class="img-fluid" alt="" />
+								</div>
+								<div class="pro-photos" style="margin-left:0px">
+
+									<div style="margin-top:5px;">
+										<a><i class="fas fa-clock"></i>&nbsp;&nbsp;&nbsp;@Model.CreatedAt</a> &nbsp; &nbsp;&nbsp;&nbsp;
+
+									</div>
+									<div style="margin-top:5px;">
+										<a><i class="fas fa-user"></i>&nbsp;&nbsp;&nbsp;by <span> @Model.User.UserName</span></a> &nbsp;&nbsp;&nbsp;&nbsp;
+
+									</div>
+									<div style="margin-top:5px;">
+										<a id="commentLink" href="#"><i class="fas fa-comments"></i>&nbsp;&nbsp;&nbsp;<span>@ViewBag.CommentCount</span></a>&nbsp;&nbsp;&nbsp;&nbsp;
+										<a href="#"><i id="likeButton" class="fas fa-heart"></i>&nbsp;&nbsp;&nbsp;<span id="likeCount">@ViewBag.LikeCount</span></a>
+
+									</div>
+
+								</div>
+								<div class="clear"></div>
+							</div>
+							<div class="col-md-8 col-sm-6">
+								<h2 class="box-title mt-0">@Model.RecipeTitle</h2>
+								<div class="list-inline">
+									<a class="text-warning"><i class="fa fa-star"></i></a>
+									<a class="text-warning"><i class="fa fa-star"></i></a>
+									<a class="text-warning"><i class="fa fa-star"></i></a>
+									<a class="text-warning"><i class="fa fa-star"></i></a>
+									<a class="text-warning"><i class="fa fa-star"></i></a>
+								</div>
+
+								<hr>
+								<p>@Model.RecipeshortDescription</p>
+								<div class="row">
+									<div class="col-md-6">
+										<div class="form-group">
+											<label class="fw-700 fs-16 form-label"> Cuisine</label>
+											<span class="form-control">@Model.Cuisine.CuisineName</span>
+
+										</div>
+									</div>
+									<div class="col-md-6">
+										<div class="form-group">
+											<label class="fw-700 fs-16 form-label">  Category</label>
+
+											<span class="form-control">@Model.Category.CategoryName</span>
+										</div>
+									</div>
+								</div>
+								<hr>
+								<div class="gap-items">
+									
+							
+								</div>
+
+							</div>
+							<div style="margin-top:25px;">
+								<label class="fw-700 form-label"> Description</label>
+								<p>@Html.Raw(Model.RecipeDescription)</p>
+							</div>
+
+							<!--  added Ingredients -->
+							<div class="row" id="field-container">
+								<div>
+									<label class="fw-700 form-label"> Ingredients</label>
+								</div>
+
+
+
+							</div>
+
+							<!--  added nutrition -->
+							<div class="row" id="field-container-nutri">
+								<div>
+									<label class="fw-700 form-label"> Nutrition</label>
+								</div>
+
+							</div>
+							<div class="row" style="margin-top:20px;">
+								<div>
+									<label class="fw-700 form-label">Additional Informations:</label>
+								</div>
+								<div style="display: flex; justify-content: space-evenly;">
+									<div class="col-md-4">
+										<div class="form-group">
+											<label class="fw-700 fs-16 form-label">Preparation Time</label>
+											<div class="input-group">
+												<div class="input-group-addon"><i class="fas fa-clock"></i></div>
+
+												<span class="form-control">@Model.PreparationTime</span>
+											</div>
+										</div>
+									</div>
+
+
+									<div class="col-md-4">
+										<div class="form-group">
+											<label class="fw-700 fs-16 form-label">Cooking Time</label>
+											<div class="input-group">
+												<div class="input-group-addon"><i class="fas fa-utensils"></i></div>
+												<span class="form-control">@Model.CookingTime</span>
+											</div>
+										</div>
+									</div>
+								</div>
+								<div style="display: flex; justify-content: space-evenly;">
+									<div class="col-md-4">
+										<div class="form-group">
+											<label class="fw-700 fs-16 form-label">Total Serving</label>
+											<div class="input-group">
+												<div class="input-group-addon"><i class="fas fa-users"></i></div>
+
+												<span class="form-control">@Model.Serving</span>
+											</div>
+										</div>
+									</div>
+
+
+									<div class="col-md-4">
+										<div class="form-group">
+											<label class="fw-700 fs-16 form-label">Cooking Time</label>
+											<div class="input-group">
+												<div class="input-group-addon"><i class="fas fa-eye"></i></div>
+												<span class="form-control">@Model.Views</span>
+											</div>
+										</div>
+									</div>
+								</div>
+
+
+							</div>
+
+							<div class="col-md-9">
+								<a id="commentsContainer" href="#">
+									<h4 style="margin-top:20px">Comments</h4>
+								</a>
+								@foreach (var comment in Model.RecipeReviews)
+								{
+									<div class="media mb-3">
+										<img src="~/UserImage/@comment.User.ImageFilePath" style="width: 60px;" class="mr-3 rounded-circle" alt="User Photo">
+										<div class="media-body">
+
+											<h5 class="mt-0">@comment.User.FirstName @comment.User.LastName</h5>
+											<p>@comment.ReviewContents</p>
+
+											@for (int i = 1; i <= 5; i++)
+											{
+												<span class="fa fa-star c@(i) @(i <= comment.Rating ? "votes" : "")" aria-hidden="true"></span>
+											}	<small class="text-muted">@comment.CreatedAt</small>
+											<!-- Reply form -->
+										</div>
+										<a asp-action="RecipecommentDelete" style=" margin-top: 16px;" asp-route-id="@comment.ReviewId" asp-controller="AdminBlogComments" class="waves-effect waves-circle btn btn-circle btn-danger-light btn-xs mb-3"><i class="fa fa-trash"></i></a>
+									</div>
+								}
+													
+							</div>
+
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="col-lg-3">
+				<form asp-action="Delete">
+					<input type="hidden" asp-for="RecipeId" />
+					<button type="submit" class="waves-effect waves-circle btn btn-circle btn-danger-light mb-3"><i class="fa fa-trash"></i> </button> |
+					<a asp-action="Index">Back to List</a>
+				</form>
+			</div>
+		</div>
+	
+	</section>
+	<!-- /.content -->
 </div>
+@section Scripts {
+	<script>
+		
+
+		var commentLink = document.getElementById('commentLink');
+		var commentsContainer = document.getElementById('commentsContainer');
+
+		// Add a click event listener to the link
+		commentLink.addEventListener('click', function (event) {
+			event.preventDefault(); // Prevent the default link behavior
+
+			// Scroll to the comments container
+			commentsContainer.scrollIntoView({ behavior: 'smooth', block: 'start' });
+		});
+		let selectedVote = 0;
+
+		function addVote(vote) {
+			const voteElement = document.getElementById("vote");
+			const ratingInput = document.querySelector("input[name='Rating']");
+
+			// Toggle the selected state of the stars
+			if (selectedVote === vote) {
+				selectedVote = 0;
+			} else {
+				selectedVote = vote;
+			}
+
+			voteElement.textContent = selectedVote;
+			ratingInput.value = selectedVote;
+
+			// Remove existing class from all stars
+			const stars = document.querySelectorAll(".raiting a");
+			stars.forEach((star) => {
+				star.classList.remove("vote");
+			});
+
+			// Add 'vote' class to selected stars
+			for (let i = 1; i <= selectedVote; i++) {
+				const star = document.querySelector(`.c${i}`);
+				star.classList.add("vote");
+			}
+		}
+	</script>
+	<script>
+		// Check if the user has liked the blog on page load
+		$.ajax({
+			url: '/RecipeLikes/CheckLikeStatus', // Replace with the appropriate endpoint URL to check like status
+			method: 'GET',
+			data: {
+				UserId: '@userId',
+				recipeId: '@Model.RecipeId',
+
+			},
+			success: function (response) {
+				var isLiked = response.isLiked;
+
+				// Update the button color based on the like status
+				if (isLiked) {
+					// Liked, change the button color to red
+
+					$('#likeButton').addClass('red');
+
+
+				} else {
+					// Not liked, remove the red color
+					$('#likeButton').removeClass('red');
+
+				}
+			},
+			error: function (xhr, status, error) {
+				// Handle the error response
+				// You can display an error message or perform any other error handling here
+			}
+		});
+
+		
+
+	</script>
+
+	<script>
+		var ingredientData = @Html.Raw(ViewData["IngredientData"] as string);
+
+		// Populate Ingredients
+		var ingredientContainer = $('#field-container');
+		/*ingredientContainer.empty();*/ // Clear existing fields
+
+
+		$.each(ingredientData, function (index, ingredient) {
+			var fieldRowingri = $('<div class="field-row" style="display: flex; justify-content: space-evenly;"></div>');
+
+			var ingredientInputGroup = $('<div class="col-md-4"><div class="form-group"><div class="input-group"></div></div></div>');
+			var ingredientAddon = $('<div class="input-group-addon"><i class="fas fa-utensils"></i></div>');
+			var ingredientNameSpan = $('<span class="form-control ingredient-name"></span>');
+			ingredientNameSpan.text(ingredient.ingrename);
+
+			ingredientInputGroup.find('.input-group').append(ingredientAddon);
+			ingredientInputGroup.find('.input-group').append(ingredientNameSpan);
+
+			var quantityInputGroup = $('<div class="col-md-4"><div class="form-group"><div class="input-group"></div></div></div>');
+			var quantityAddon = $('<div class="input-group-addon"><i class="fas fa-sort-numeric-up"></i></div>');
+			var ingredientQuantitySpan = $('<span class="form-control ingredient-quantity"></span>');
+			ingredientQuantitySpan.text(ingredient.quantity);
+
+			quantityInputGroup.find('.input-group').append(quantityAddon);
+			quantityInputGroup.find('.input-group').append(ingredientQuantitySpan);
+
+			fieldRowingri.append(ingredientInputGroup);
+			fieldRowingri.append(quantityInputGroup);
+
+			ingredientContainer.append(fieldRowingri);
+		});
+
+		var nutritionDatass = @Html.Raw(ViewData["NutritionData"] as string);
+		var nutritionContainer = $('#field-container-nutri');
+
+		$.each(nutritionDatass, function (index, nutri) {
+			var fieldRownutri = $('<div class="field-row-nutri" style="display: flex; justify-content: space-evenly;"></div>');
+
+			var nutritionInputGroup = $('<div class="col-md-4"><div class="form-group"><div class="input-group"></div></div></div>');
+			var nutritionAddon = $('<div class="input-group-addon"><i class="fas fa-apple-alt"></i></div>');
+			var nutritionNameSpan = $('<span class="form-control nutrition-name"></span>');
+			nutritionNameSpan.text(nutri.nutriname);
+
+			nutritionInputGroup.find('.input-group').append(nutritionAddon);
+			nutritionInputGroup.find('.input-group').append(nutritionNameSpan);
+
+			var gramsInputGroup = $('<div class="col-md-4"><div class="form-group"><div class="input-group"></div></div></div>');
+			var gramsAddon = $('<div class="input-group-addon"><i class="fas fa-weight"></i></div>');
+			var nutritionGramsSpan = $('<span class="form-control nutrition-grams"></span>');
+			nutritionGramsSpan.text(nutri.grams);
+
+			gramsInputGroup.find('.input-group').append(gramsAddon);
+			gramsInputGroup.find('.input-group').append(nutritionGramsSpan);
+
+			fieldRownutri.append(nutritionInputGroup);
+			fieldRownutri.append(gramsInputGroup);
+
+			nutritionContainer.append(fieldRownutri);
+		});
+
+	</script>
+
+
+}
+    
+
+
+   
+

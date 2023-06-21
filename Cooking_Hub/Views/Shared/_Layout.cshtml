@@ -17,7 +17,7 @@
 		<meta name="description" content="">
 		<meta name="author" content="">
 		<link rel="icon" href="https://riday-admin-template.multipurposethemes.com/bs5/images/favicon.ico">
-
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/MaterialDesign-Webfont/7.2.96/css/materialdesignicons.min.css" integrity="sha512-LX0YV/MWBEn2dwXCYgQHrpa9HJkwB+S+bnBpifSOTO1No27TqNMKYoAn6ff2FBh03THAzAiiCwQ+aPX+/Qt/Ow==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 		<title>Cooking Hub Admin </title>
 		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 		<!-- Vendors Style-->
@@ -202,6 +202,15 @@
 									</a>
 									
 								</li>
+                                <li class="nav-item @(ViewContext.RouteData.Values["Controller"].ToString() == "AdminContacts" && ViewContext.RouteData.Values["Action"].ToString() == "Index" ? "active" : "")">
+
+                                    <a asp-controller="AdminContacts" asp-action="Index">
+                                        <i class="fas fa-envelope" ><span class="path1"></span><span class="path2"></span></i>
+                                        <span>Contact Us</span>
+
+                                    </a>
+
+                                </li>
 								
 							</ul>
 
@@ -255,10 +264,10 @@
 		<script src="~/admin/assets/icons/feather-icons/feather.min.js"></script>
 		<script src="~/admin/assets/vendor_components/OwlCarousel2/dist/owl.carousel.js"></script>
 		<!-- Riday Admin App -->
-		
+        <script src="~/admin/assets/vendor_components/datatable/datatables.min.js"></script>
         <script src="~/admin/main/js/template.js"></script>
 		<script src="~/admin/main/js/pages/dashboard.js"></script>
-
+        <script src="~/admin/main/js/pages/data-table.js"></script>
 
 
 
@@ -314,7 +323,8 @@ else
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
         <!-- Favicon -->
         <link rel="shortcut icon" href="~/img/favicon.png">
-
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css" integrity="sha384-xOolHFLEh07PJGoPkLv1IbcEPTNtaed2xpHsD9ESMhqIYd0nLMwNLD69Npy4HI+N" crossorigin="anonymous">
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.min.js" integrity="sha384-cuYeSxntonz0PPNlHhBs68uyIAVpIIOZZ5JqeqvYYIcEL727kskC66kF92t6Xl2V" crossorigin="anonymous"></script>
         <!-- Normalize Css -->
         <link rel="stylesheet" href="~/css/normalize.css">
         <!-- Main Css -->
@@ -327,13 +337,16 @@ else
         <link rel="stylesheet" href="~/css/fontawesome-all.min.css">
         <!-- Flaticon CSS -->
         <link rel="stylesheet" href="~/fonts/flaticon.css">
+        <link rel="stylesheet" href="~/css/owl.carousel.min.css">
+        <link rel="stylesheet" href="~/css/owl.theme.default.min.css">
         <!-- Custom Css -->
         <link rel="stylesheet" href="~/style.css">
         <!-- Modernizr Js -->
         <script src="~/js/modernizr-3.6.0.min.js"></script>
+        <link href="~/css/site.css" rel="stylesheet" />
     </head>
 
-    <body style="position: relative;">
+    <body>
 
         <!-- Add your site or application content here -->
         <!-- Preloader Start Here -->
@@ -384,7 +397,7 @@ else
                                                 </li>
                                             </ul>
                                         </li>
-                                        <li class="possition-static hide-on-mobile-menu">
+                                        @*<li class="possition-static hide-on-mobile-menu">
                                             <a href="#">Pages</a>
                                             <div class="template-mega-menu">
                                                 <div class="container">
@@ -471,7 +484,7 @@ else
                                                     </div>
                                                 </div>
                                             </div>
-                                        </li>
+                                        </li>*@
                                         <li class="hide-on-desktop-menu">
                                             <a href="#">Pages</a>
                                             <ul class="dropdown-menu-col-1">
@@ -496,15 +509,11 @@ else
                                             </ul>
                                         </li>
                                         <li>
-                                            <a href="#">Blog</a>
-                                            <ul class="dropdown-menu-col-1">
-                                                <li><a href="blog-grid.html">Blog Grid</a></li>
-                                                <li><a href="blog-list.html">Blog List</a></li>
-                                                <li><a href="single-blog.html">Blog Details</a></li>
-                                            </ul>
+                                            <a asp-controller="UserBlog" asp-action="AllBlog">Blog</a>
+                                           
                                         </li>
 
-                                        <li><a href="contact.html">Contact</a></li>
+                                        <li><a asp-action="ContactUs" asp-controller="Home">Contact</a></li>
                                     </ul>
                                 </nav>
                             </div>
@@ -593,40 +602,17 @@ else
             </header>
             <!-- Header Area End Here -->
             <!-- Inne Page Banner Area Start Here -->
-            <section class="inner-page-banner bg-common" data-bg-image="~/img/figure/inner-page-banner1.jpg">
-                <div class="container">
-                    <div class="row">	
-                        <div class="col-12">
-                            <div class="breadcrumbs-area">
-								<h1 class="h1-overss">@ViewData["Title Description"]</h1>
-                                <ul>
-                                    <li>
-                                        <a asp-controller="Home" asp-action="Index">Home</a>
-                                    </li>
-                                    <li>@ViewData["Title"]</li>
-                                </ul>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </section>
-            <!-- Inne Page Banner Area End Here -->
-            <!-- Error Page Area Start Here -->
-        @RenderBody()
-            @*  <section class="contact-page-wrap">
-        <div class="container">
-        <div class="row">
-
-        </div>
-        </div>
-        </section>*@
+          
+          
+             @RenderBody()
+           
         </div>
 
         <!-- Footer Area Start Here -->
-        <footer class="ranna-bg-dark" style="   position: absolute;
+        <footer class="ranna-bg-dark"@* style="   position: relative;
                                                 bottom: 0;
                                                 right: 0;
-                                                left: 0;">
+                                                left: 0;"*@>
             <div class="container">
                 <div class="footer-logo">
                     <a asp-controller="Home" asp-action="Index"><img width="210" src="~/logo white.png" class="img-fluid" alt="footer-logo"></a>
@@ -655,9 +641,6 @@ else
         </div>
 
 
-
-
-        <!-- Search Box End Here -->
         <!-- Jquery Js -->
         <script src="~/js/jquery-3.3.1.min.js"></script>
         <!-- Bootstrap Js -->
@@ -666,18 +649,15 @@ else
         <script src="~/js/bootstrap.min.js"></script>
         <!-- Plugins Js -->
         <script src="~/js/plugins.js"></script>
+        <!-- Owl Carousel Js -->
+        <script src="~/js/owl.carousel.min.js"></script>
         <!-- Smoothscroll Js -->
         <script src="~/js/smoothscroll.min.js"></script>
-
-        <!-- Validator js -->
-        <script src="~/js/validator.min.js"></script>
         <!-- Custom Js -->
         <script src="~/js/main.js"></script>
-        <script>
-            $(document).ready(function () {
-                $('#myModal').modal('show');
-            });
-        </script>
+        <script src="~/js/validator.min.js"></script>
+       
+     
         @await RenderSectionAsync("Scripts", required: false)
     </body>
     </html>

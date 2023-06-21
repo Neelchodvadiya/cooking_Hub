@@ -1,0 +1,67 @@
+﻿@model Cooking_Hub.Models.Contact
+@{
+    ViewData["Title"] = "Contact";
+    ViewData["Title Description"] = "Contact With Us";
+}
+
+<section class="inner-page-banner bg-common" data-bg-image="/img/figure/inner-page-banner1.jpg">
+    <div class="container">
+        <div class="row">
+            <div class="col-12">
+                <div class="breadcrumbs-area">
+                    <h1 class="h1-overss">@ViewData["Title Description"]</h1>
+                    <ul>
+                        <li>
+                            <a asp-controller="Home" asp-action="Index">Home</a>
+                        </li>
+                        <li>@ViewData["Title"]</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<section class="contact-page-wrap">
+    <div class="contact-box-left">
+        <div class="container">
+
+            <div class="section-heading heading-dark">
+                <h3 class="item-heading-big">Send Us Message</h3>
+            </div>
+            <form  class="contact-form-box" asp-controller="Home" asp-action="CreateContactUs">
+                <div class="row">
+                    <div class="col-md-6 form-group">
+                        <input asp-for="ContactName" type="text" placeholder="Name *" class="form-control" data-error="Name field is required"
+                               required>
+                        <div class="help-block with-errors"></div>
+                    </div>
+                    <div class="col-md-6 form-group">
+                        <input asp-for="ContactEmail" type="email" placeholder="E-mail *" class="form-control" data-error="E-mail field is required"
+                               required>
+                        <div class="help-block with-errors"></div>
+                    </div>
+                    <div class="col-12 form-group">
+                        <input asp-for="ContactSubject" maxlength="100" type="text" placeholder="Subject *" class="form-control" 
+                               data-error="Subject field is required" required>
+                        <div class="help-block with-errors"></div>
+                    </div>
+                    <div class="col-12 form-group">
+                        <textarea asp-for="ContactMessage" placeholder="Type your text" class="textarea form-control"  id="form-message"
+                                  rows="7" cols="20" data-error="Message field is required" required></textarea>
+                        <div class="help-block with-errors"></div>
+                    </div>
+                    <div class="col-12 form-group mb-0 mt-3">
+                        <button type="submit" class="item-btn">SUBMIT MESSAGE</button>
+                    </div>
+                   
+                </div>
+            </form>
+        </div>
+    </div>
+    <div class="contact-box-right">
+        <div class="google-map-wrap-layout1">
+            <iframe src="https://maps.google.com/maps?q=Surat&t=&z=13&ie=UTF8&iwloc=&output=embed" width="600" height="450" frameborder="0" style="border:0;" allowfullscreen="" aria-hidden="false" tabindex="0"></iframe>
+
+        </div>
+    </div>
+</section>

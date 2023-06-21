@@ -1,0 +1,72 @@
+﻿@model IEnumerable<Cooking_Hub.Models.Contact>
+
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h1>Index</h1>
+
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+
+        <div class="col-12">
+
+            <div class="box">
+                <div class="box-header with-border">
+                    <h3 class="box-title">Contact us</h3>
+                </div>
+                <!-- /.box-header -->
+                <div class="box-body">
+                    <div class="table-responsive">
+                        <table id="example1" class="table table-bordered table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Email</th>
+                                    <th>Subject</th>
+                                    <th>Message</th>
+                                    <th>Date</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var item in Model)
+                                {
+                                    <tr>
+                                        <td>
+                                            @Html.DisplayFor(modelItem => item.ContactName)
+                                        </td>
+                                        <td>
+                                            @Html.DisplayFor(modelItem => item.ContactEmail)
+                                        </td>
+                                <td >
+                                    @Html.DisplayFor(modelItem => item.ContactSubject)
+                                </td>
+                                <td style="width: 300px;min-height: 69px;max-height: 69px;
+                                    overflow: hidden;display: -webkit-box;-webkit-line-clamp: 4;
+                                    -webkit-box-orient: vertical;">
+                                            @Html.DisplayFor(modelItem => item.ContactMessage)
+                                        </td>
+                                        <td>
+                                            @Html.DisplayFor(modelItem => item.CreatedAt)
+                                        </td>
+                                     
+                                        <td>
+                                    <a asp-action="Details" asp-route-id="@item.ContactId" class="waves-effect waves-circle btn btn-circle btn-success-light btn-xs mb-5"><i class="fa fa-eye"></i></a>
+
+                                    <a asp-action="Delete" asp-route-id="@item.ContactId" class="waves-effect waves-circle btn btn-circle btn-danger-light btn-xs  mb-5"><i class="fa fa-trash"></i></a>
+
+
+                                    
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <!-- /.box-body -->
+            </div>
+        </div>

@@ -6,10 +6,13 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Cooking_Hub.Models;
+using Microsoft.AspNetCore.Authorization;
+using System.Data;
 
 namespace Cooking_Hub.Controllers.Admin
 {
-    public class AdminCuisinesController : Controller
+	[Authorize(Roles = "Admin")]
+	public class AdminCuisinesController : Controller
     {
         private readonly CookingHubContext _context;
         private readonly IWebHostEnvironment hostEnvironment;

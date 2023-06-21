@@ -1,126 +1,177 @@
-﻿@model IEnumerable<Cooking_Hub.Models.Recipe>
-
+﻿@*@model IEnumerable<Cooking_Hub.Models.Blog>*@
+@model PaginatedList<RecipeViewModel>
 @{
     ViewData["Title"] = "Index";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h1>Index</h1>
-
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.RecipeTitle)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.RecipeshortDescription)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.RecipeDescription)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.PreparationTime)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.CookingTime)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Serving)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Views)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Ingridients)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Nutrition)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.RecipeImage)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.IsActive)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.CreatedAt)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.UpdatedAt)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Category)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Cuisine)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.User)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.RecipeTitle)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.RecipeshortDescription)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.RecipeDescription)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.PreparationTime)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.CookingTime)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Serving)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Views)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Ingridients)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Nutrition)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.RecipeImage)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.IsActive)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.CreatedAt)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.UpdatedAt)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Category.CategoryId)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Cuisine.CuisineId)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.User.Id)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.RecipeId">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.RecipeId">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.RecipeId">Delete</a>
-            </td>
-        </tr>
+@functions {
+    public string GetBorderStyle(bool? isActive)
+    {
+        if (isActive.HasValue && isActive.Value)
+        {
+            return "border: 2px solid green;";
+        }
+        else
+        {
+            return "border: 2px solid red;";
+        }
+    }
 }
-    </tbody>
-</table>
+@if (Model.Count == 0)
+{
+	<div class="alert alert-warning" style="width: 64%;display: flex;justify-content: space-between;" role="alert" id="alert-message">
+		<span style="margin-top: 8px;color: purple;">No Recipe found.</span>
+		<button id="redirectton" class="waves-effect waves-circle btn btn-circle btn-danger-light btn-xs  mb-5"><i class="fa fa-times"></i></button>
+	</div>
+}
+else
+{
+
+<style>
+    .pagination {
+        display: flex;
+        margin-top: 20px;
+    }
+
+    .pagination-list {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
+
+        .pagination-list li {
+            display: inline-block;
+            margin-right: 5px;
+        }
+
+    .current-page {
+        display: inline-block;
+        background-color: #4c95dd;
+        color: white;
+        padding: 5px 10px;
+    }
+
+    .pagination-list a {
+        display: inline-block;
+        padding: 5px 10px;
+        text-decoration: none;
+        color: black;
+        border: 1px solid #ccc;
+    }
+
+        .pagination-list a:hover {
+            background-color: #eee;
+        }
+</style>
+
+<div class="container-full">
+    <!-- Content Header (Page header) -->
+    <div class="content-header">
+        <div class="content-header">
+            <div class="d-flex align-items-center">
+                <div class="me-auto">
+                    <h4 class="page-title">Recipe List</h4>
+                    <h4 class="page-title"><a class="btn btn-success" asp-action="Create">Create New</a></h4>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <section class="content">
+        <div class="row">
+            @foreach (var recipe in Model)
+            {
+                <div class="col-md-4">
+                    <div class="box overflow-hidden" style="@GetBorderStyle(recipe.IsActive);">
+                        <figure class="img-hov-zoomin mb-0" style="height: 253px">
+                            @if (string.IsNullOrEmpty(recipe.RecipeImage))
+                            {
+                                <img src="~/Admin/images/gallery/thumb/2.jpg" alt="...">
+                            }
+                            else
+                            {
+
+                                <img style="    max-height: 253px; min-width: 367px; max-width: 367px;" src="~/userimage/@recipe.RecipeImage" alt="...">
+
+                            }
+
+                        </figure>
+                        <div class="box-body">
+                            <h4 style="min-height: 43.2px;overflow: hidden;
+                            display: -webkit-box;
+                            -webkit-line-clamp: 2;
+                            -webkit-box-orient: vertical;">
+                                <a href="#">@recipe.RecipeTitle</a>
+                            </h4>
+                            <p>@recipe.CreatedAt  @recipe.UserName</p>
+                            <div style="min-height: 105px;
+                                max-height: 105px;
+                            overflow: hidden;
+                            display: -webkit-box;
+                            -webkit-line-clamp: 5;
+                            -webkit-box-orient: vertical;">
+                                @Html.Raw(recipe.RecipeShortDescription)
+                            </div>
+                            <div class="flexbox align-items-center mt-3">
+                                <a class="btn btn-sm btn-bold btn-primary" asp-action="Details" asp-route-id="@recipe.RecipeId">Read more</a>
+                                <div class="gap-items-4" style="display:flex">
+
+                                    <div class="text-center mx-5">
+                                        <a asp-action="Edit" asp-route-id="@recipe.RecipeId" class="waves-effect waves-circle btn btn-circle btn-primary-light btn-xs mb-5"><i class="fa fa-edit"></i></a>
+
+                                    </div>
+                                    <div class="text-center mx-5">
+                                        <a asp-action="Delete" asp-route-id="@recipe.RecipeId" class="waves-effect waves-circle btn btn-circle btn-danger-light btn-xs  mb-5"><i class="fa fa-trash"></i></a>
+
+                                    </div>
+
+                                    <a class="text-muted" style="margin-top: 5px;">
+                                        <i class="fa fa-heart me-1"></i> @recipe.TotalLikes
+                                    </a>
+                                    <a class="text-muted" style="margin-top: 5px;">
+                                        <i class="fa fa-comment me-1"></i> @recipe.TotalComments
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+
+        </div>
+
+    </section>
+</div>
+
+
+
+<div class="pagination">
+    <ul class="pagination-list">
+        @for (int i = 1; i <= Model.TotalPages; i++)
+        {
+            <li>
+                @if (i == Model.PageIndex)
+                {
+                    <span class="current-page">@i</span>
+                }
+                else
+                {
+                    <a href="?pageNumber=@i">@i</a>
+                }
+            </li>
+        }
+    </ul>
+</div>
+}
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+
+        // Add a click event listener to the button
+        document.getElementById("redirectton").addEventListener("click", function () {
+            // Redirect to the index page
+            window.location.href = "AdminRecipes/index"; // Replace with the actual URL
+        });
+    });
+</script>
