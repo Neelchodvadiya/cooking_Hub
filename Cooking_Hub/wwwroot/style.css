@@ -152,6 +152,11 @@ h6 {
 /*=======================================================================
 2. Default Css
 =========================================================================*/
+
+.red {
+    color: red !important;
+    
+}
 a {
   text-decoration: none;
 }
@@ -8015,10 +8020,10 @@ ul {
   transition: all 0.3s ease-out;
 }
 .single-blog-box .blog-content .entry-meta li a i {
-  margin-right: 10px;
-  color: #ff4a52;
-  font-size: 14px;
-}
+        margin-right: 10px;
+        color: #4a8dff;
+        font-size: 14px;
+    }
 .single-blog-box .blog-content .entry-meta li a:hover {
   color: #ff4a52;
 }

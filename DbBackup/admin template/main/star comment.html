@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        /* Created by Parth Saini */
+        body {
+            margin: 0;
+            padding: 0;
+        }
+
+        .raiting {
+            display: flex;
+            margin-top: 20px;
+        }
+
+        .raiting h6 {
+            margin: 10px;
+        }
+
+        .box {
+            direction: rtl;
+            margin: 0;
+        }
+
+        tr:nth-child(2n) {
+            animation-delay: 1s;
+        }
+
+        .anim {
+            animation: mig 0.5s alternate;
+        }
+
+        .body {
+            border-bottom: 1px solid grey;
+            margin: 0;
+        }
+
+        .title,
+        .text {
+            padding: 20px;
+        }
+
+        .vote {
+            color: #f1c40f !important;
+        }
+
+        .box a {
+            font-size: 20px;
+            color: #313131;
+            /*transition:0.2s all;*/
+        }
+
+        .box a:hover,
+        .vote {
+            color: #f1c40f;
+        }
+
+        .b1:hover ~ a {
+            color: #f1c40f;
+        }
+
+        .b2:hover ~ a {
+            color: #f1c40f;
+        }
+
+        .b3:hover ~ a {
+            color: #f1c40f;
+        }
+
+        .b4:hover ~ a {
+            color: #f1c40f;
+        }
+
+        .c5:hover ~ a {
+            animation: ro 0.5s;
+        }
+
+        .c4:hover ~ a {
+            animation: ro 0.5s;
+        }
+
+        .c3:hover ~ a {
+            animation: ro 0.5s;
+        }
+
+        .c2:hover ~ a {
+            animation: ro 0.5s;
+        }
+
+        .c1:hover ~ a {
+            animation: ro 0.5s;
+        }
+
+        @keyframes ro {
+            0% {
+                opacity: 0.2;
+            }
+
+            50% {
+                opacity: 0.7;
+            }
+
+            100% {
+                opacity: 1;
+            }
+        }
+
+        @keyframes mig {
+            0% {
+                background-color: #ffd;
+            }
+
+            10% {
+                background-color: #eed;
+            }
+
+            20% {
+                background-color: #aa8;
+            }
+
+            30% {
+                background-color: #990;
+            }
+
+            100% {
+                background-color: transparent;
+            }
+        }
+    </style>
+    <title>Page Title</title>
+    <link
+        rel="stylesheet"
+        href="https://use.fontawesome.com/releases/v5.8.1/css/all.css"
+        integrity="sha384-50oBUHEmvpQ+1lW4y57PTFmhCaXp0ML5d60M1M7uH2+nqUivzIebhndOJK28anvf"
+        crossorigin="anonymous"
+    >
+</head>
+<body>
+    <table>
+        <tbody class="record">
+            <tr class="body">
+                <td class="title">S.J.Coderini</td>
+                <td class="text">Book of code</td>
+                <td class="box">
+                    <div class="raiting">
+                        <h6>Your vote <span id="vote">0</span></h6>
+                        <a class="fa fa-star c5" aria-hidden="true" onclick="addVote(5)"></a>
+                        <a class="fa fa-star c4" aria-hidden="true" onclick="addVote(4)"></a>
+                        <a class="fa fa-star c3" aria-hidden="true" onclick="addVote(3)"></a>
+                        <a class="fa fa-star c2" aria-hidden="true" onclick="addVote(2)"></a>
+                        <a class="fa fa-star c1" aria-hidden="true" onclick="addVote(1)"></a>
+                    </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+
+    <script>
+        let selectedVote = 0;
+
+        function addVote(vote) {
+            const voteElement = document.getElementById("vote");
+
+            // Toggle the selected state of the stars
+            if (selectedVote === vote) {
+                selectedVote = 0;
+            } else {
+                selectedVote = vote;
+            }
+
+            voteElement.textContent = selectedVote;
+
+            // Remove existing class from all stars
+            const stars = document.querySelectorAll(".raiting a");
+            stars.forEach((star) => {
+                star.classList.remove("vote");
+            });
+
+            // Add 'vote' class to selected stars
+            for (let i = 1; i <= selectedVote; i++) {
+                const star = document.querySelector(`.c${i}`);
+                star.classList.add("vote");
+            }
+        }
+    </script>
+</body>
+</html>
+

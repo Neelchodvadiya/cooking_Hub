@@ -22,14 +22,14 @@
                 {
                     <div class="ranna-slider-content-layout2">
                         <figure class="item-figure">
-                            <a asp-action="DetailsRecipe" asp-controller="Home" asp-route-id="@recipe.RecipeId">
+                            <a asp-action="Details" asp-controller="UserRecipe" asp-route-id="@recipe.RecipeId">
                             <img src="~/UserImage/@recipe.RecipeImage"
                                      alt="Product" style="height: 518px;" />
                         </a>
                     </figure>
                     <div class="item-content">
                         <span class="sub-title">@recipe.Categoryname</span>
-                            <h2 class="item-title"><a asp-action="DetailsRecipe" asp-controller="Home" asp-route-id="@recipe.RecipeId">@recipe.RecipeTitle</a></h2>
+                            <h2 class="item-title"><a asp-action="Details" asp-controller="UserRecipe" asp-route-id="@recipe.RecipeId">@recipe.RecipeTitle</a></h2>
                         <ul class="item-rating">
                             <li class="star-fill"><i class="fas fa-star"></i></li>
                             <li class="star-fill"><i class="fas fa-star"></i></li>

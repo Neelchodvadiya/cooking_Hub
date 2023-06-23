@@ -20,7 +20,7 @@
         <div class="col-md-9">
             <div class="scrollable-content" style="max-height: 500px; overflow-y: auto;">
                 <div class="card bg-white">
-                    <img src="~/UserImage/@Model.BlogImage" alt="Blog Image" class="card-img-top">
+                    <img src="~/UserImage/@Model.BlogImage" alt="Blog Image" style="height: 500px;" class="card-img-top">
                     <div class="card-body">
                         <ul class="entry-meta" style="display:flex">
                             <a><i class="fas fa-clock"></i>&nbsp;&nbsp;&nbsp;@Model.CreatedAt</a> &nbsp; &nbsp;&nbsp;&nbsp;
@@ -28,6 +28,7 @@
                             <a id="commentLink" href="#"><i class="fas fa-comments"></i>&nbsp;&nbsp;&nbsp;<span>@ViewBag.CommentCount</span></a>&nbsp;&nbsp;&nbsp;&nbsp;
                             <a href="#"><i id="likeButton" class="fas fa-heart"></i>&nbsp;&nbsp;&nbsp;<span id="likeCount">@ViewBag.LikeCount</span></a>
                         </ul>
+                        <h3>@Model.Category.CategoryName</h3>
                         <h2 class="card-title"> @Html.Raw(Model.BlogTitle)</h2>
                         <p class="card-text"> @Html.Raw(Model.BlogshortDescription)</p>
                         <h4>Blog Content</h4>
@@ -124,7 +125,7 @@
 </div>
 
 @section Scripts {
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha384-KyT/jj4gqwc7e0nplcudA44OISmf+4W5C0d3x+ywe5W2H79xCX0iiuK4CfHcZ84d" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.0/jquery.min.js" integrity="sha512-3gJwYpMe3QewGELv8k/BX9vcqhryRdzRMxVfq6ngyWXwo03GFEzjsUm8Q7RZcHPHksttq7/GFoxjCVUjkjvPdw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <script>
         $(document).ready(function () {
             $(".toggle-reply").click(function () {
@@ -150,8 +151,9 @@
             $.ajax({
                 url: '/AdminBlogLikes/CheckLikeStatus', // Replace with the appropriate endpoint URL to check like status
                 method: 'GET',
-                data: { UserId: '@userId',
-                    BlogId: '@Model.BlogId',                  
+                data: {
+                    UserId: '@userId',
+                    BlogId: '@Model.BlogId',
 
                 },
                 success: function (response) {
@@ -167,7 +169,7 @@
                     } else {
                         // Not liked, remove the red color
                         $('#likeButton').removeClass('red');
-                     
+
                     }
                 },
                 error: function (xhr, status, error) {
@@ -229,7 +231,6 @@
         });
     </script>
     <script>
-       
         var commentLink = document.getElementById('commentLink');
         var commentsContainer = document.getElementById('commentsContainer');
 
@@ -241,8 +242,4 @@
             commentsContainer.scrollIntoView({ behavior: 'smooth', block: 'start' });
         });
     </script>
-
 }
-
-
-

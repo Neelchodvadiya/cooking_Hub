@@ -1,0 +1,99 @@
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+	const doughnutChart = document.getElementById('UserChart1');
+	const totalCategoryCount = @ViewBag.totalUserCount // Replace with the actual value of totalCategoryCount
+
+	new Chart(doughnutChart, {
+		type: 'doughnut',
+		data: {
+			labels: ['Inactive', 'Active'],
+			datasets: [{
+					data: [@ViewBag.InactiveUserCount, @ViewBag.ActiveUserCount],
+					// Replace with the actual values of InactiveCategoryCount and ActiveCategoryCount
+				label: 'Users',
+				backgroundColor: [
+					'rgba(255, 99, 132, 0.8)',
+					'rgba(54, 162, 235, 0.8)'
+				],
+				borderColor: [
+					'rgba(255, 99, 132, 1)',
+					'rgba(54, 162, 235, 1)'
+				],
+				borderWidth: 1
+			}]
+		},
+		options: {
+			responsive: true,
+			cutoutPercentage: 70,
+			legend: {
+				display: false
+			},
+			tooltips: {
+				enabled: false
+			},
+			plugins: {
+				datalabels: {
+					display: false
+				}
+			},
+			centerText: {
+				display: true,
+				text: "totalCategoryCount",
+				fontStyle: 'bold',
+				fontSize: 24,
+				color: '#000000'
+			}
+		}
+	});
+</script>
+<script>
+
+	var ctx = document.getElementById('userChart').getContext('2d');
+	var userChart = new Chart(ctx, {
+		type: 'line',
+		data: {
+			labels: @Html.Raw(Json.Serialize(ViewBag.weekLabels)),
+			datasets: [{
+				label: 'User ',
+				data: @Html.Raw(Json.Serialize(ViewBag.userCounts)),
+				backgroundColor: 'rgba(0, 123, 255, 0.5)',
+				borderColor: 'rgba(0, 123, 255, 1)',
+				borderWidth: 1,
+				pointRadius: 3,
+				pointBackgroundColor: 'rgba(0, 123, 255, 1)'
+			}]
+		},
+		options: {
+			responsive: true,
+			scales: {
+				y: {
+					beginAtZero: true,
+					stepSize: 1
+				}
+			}
+		}
+	});
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.0/jquery.min.js" integrity="sha512-3gJwYpMe3QewGELv8k/BX9vcqhryRdzRMxVfq6ngyWXwo03GFEzjsUm8Q7RZcHPHksttq7/GFoxjCVUjkjvPdw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+
+<div class="col-xxxl-7 col-xl-6 col-lg-6 col-6">
+    <div class="box">
+        <div class="box-body">	
+            <div class="d-flex justify-content-between">
+                <div>
+                    <h4 class="box-title mb-0">Users Pie Chart</h4>
+                    
+                </div>
+                <div class="text-end">
+                    <h3 class="box-title mb-0 fw-700">@ViewBag.totalUserCount</h3>
+                    <p class="mb-0"><span class="text-success"></span>Total Users</p>
+                </div>
+            </div>
+            <div style="height:290px">
+                <canvas id="UserChart1" style=""></canvas>
+            </div>
+        </div>
+    </div>
+</div>

@@ -323,8 +323,8 @@ else
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
         <!-- Favicon -->
         <link rel="shortcut icon" href="~/img/favicon.png">
-        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css" integrity="sha384-xOolHFLEh07PJGoPkLv1IbcEPTNtaed2xpHsD9ESMhqIYd0nLMwNLD69Npy4HI+N" crossorigin="anonymous">
-        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.min.js" integrity="sha384-cuYeSxntonz0PPNlHhBs68uyIAVpIIOZZ5JqeqvYYIcEL727kskC66kF92t6Xl2V" crossorigin="anonymous"></script>
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css"  crossorigin="anonymous">
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.min.js" crossorigin="anonymous"></script>
         <!-- Normalize Css -->
         <link rel="stylesheet" href="~/css/normalize.css">
         <!-- Main Css -->
@@ -371,31 +371,15 @@ else
                                 <nav class="site-nav">
                                     <ul id="site-menu" class="site-menu">
                                         <li>
-                                            <a href="#">Home</a>
-                                            <ul class="dropdown-menu-col-1">
-                                                <li><a href="index.html">Home 1</a></li>
-                                                <li><a href="index2.html">Home 2</a></li>
-                                            </ul>
+                                            <a asp-controller ="Home" asp-action="Index">Home</a>
+                                          
                                         </li>
                                         <li>
-                                            <a href="category.html">Category</a>
+                                            <a asp-controller="UserCategory" asp-action="Index">Category</a>
                                         </li>
                                         <li>
-                                            <a href="#">Recipes</a>
-                                            <ul class="dropdown-menu-col-1">
-                                                <li>
-                                                    <a href="recipe-with-sidebar.html">Recipes With Sidebar</a>
-                                                </li>
-                                                <li>
-                                                    <a href="recipe-without-sidebar.html">Recipes Without Sidebar</a>
-                                                </li>
-                                                <li>
-                                                    <a href="single-recipe1.html">Single Recipe 1</a>
-                                                </li>
-                                                <li>
-                                                    <a href="single-recipe2.html">Single Recipe 2</a>
-                                                </li>
-                                            </ul>
+                                            <a asp-controller="UserRecipe" asp-action="Index">Recipes</a>
+                                           
                                         </li>
                                         @*<li class="possition-static hide-on-mobile-menu">
                                             <a href="#">Pages</a>
@@ -509,7 +493,7 @@ else
                                             </ul>
                                         </li>
                                         <li>
-                                            <a asp-controller="UserBlog" asp-action="AllBlog">Blog</a>
+                                            <a asp-controller="UserBlog" asp-action="Index">Blog</a>
                                            
                                         </li>
 
@@ -632,14 +616,43 @@ else
         </footer>
         <!-- Footer Area End Here -->
         <!-- Search Box Start Here -->
-        <div id="search" class="search-wrap">
-            <button type="button" class="close">×</button>
-            <form class="search-form">
-                <input type="search" value="" placeholder="Type here........" />
+        @if (ViewBag.ShowFilter != null && ViewContext.RouteData.Values["controller"].ToString().Equals("UserBlog"))
+        {
+            <div id="search" class="search-wrap">
+                <button type="button" class="close">×</button>
+                <form id="search-form" class="search-form" asp-action="Index" asp-controller="UserBlog">
+                    <input type="search" name="searchString" placeholder="Type here........" value="@ViewData["CurrentFilter"]">
                 <button type="submit" class="search-btn"><i class="flaticon-search"></i></button>
-            </form>
-        </div>
 
+            </form>
+               
+        </div>
+        }
+        @if (ViewBag.ShowFilter != null && ViewContext.RouteData.Values["controller"].ToString().Equals("UserCategory"))
+        {
+            <div id="search" class="search-wrap">
+                <button type="button" class="close">×</button>
+                <form id="search-form" class="search-form" asp-action="Index" asp-controller="Home">
+                    <input type="search" name="searchString" placeholder="Type here........" value="@ViewData["CurrentFilter"]">
+                    <button type="submit" class="search-btn"><i class="flaticon-search"></i></button>
+
+                </form>
+
+            </div>
+        }
+        @if (ViewBag.ShowFilter != null && ViewContext.RouteData.Values["controller"].ToString().Equals("UserCategory"))
+        {
+            <div id="search" class="search-wrap">
+                <button type="button" class="close">×</button>
+                <form id="search-form" class="search-form" asp-action="Index" asp-controller="UserRecipe">
+                    <input type="search" name="searchString" placeholder="Type here........" value="@ViewData["CurrentFilter"]">
+                    <button type="submit" class="search-btn"><i class="flaticon-search"></i></button>
+
+                </form>
+
+            </div>
+        }
+      
 
         <!-- Jquery Js -->
         <script src="~/js/jquery-3.3.1.min.js"></script>
@@ -656,8 +669,8 @@ else
         <!-- Custom Js -->
         <script src="~/js/main.js"></script>
         <script src="~/js/validator.min.js"></script>
-       
-     
+
+   
         @await RenderSectionAsync("Scripts", required: false)
     </body>
     </html>

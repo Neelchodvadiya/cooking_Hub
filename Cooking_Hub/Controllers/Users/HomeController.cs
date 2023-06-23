@@ -100,50 +100,7 @@ namespace Cooking_Hub.Controllers.Users
             }
            return RedirectToAction(nameof(Index));
         }
-        public async Task<IActionResult> DetailsRecipe(string id)
-        {
-            if (id == null || _context.Recipes == null)
-            {
-                return NotFound();
-            }
-            var recipe = await _context.Recipes
-                           .Include(b => b.Category)
-                           .Include(b => b.Cuisine)
-                           .Include(b => b.User)
-                           .Include(b => b.RecipeReviews)
-                               .ThenInclude(c => c.User)
-                           .Include(b => b.RecipeLikes)
-                           .FirstOrDefaultAsync(m => m.RecipeId == id);
-
-            int commentCount = recipe.RecipeReviews.Count();
-            int likeCount = recipe.RecipeLikes.Count();
-
-            ViewBag.CommentCount = commentCount;
-            ViewBag.LikeCount = likeCount;
-
-            ViewData["IngredientData"] = recipe.Ingridients;
-            ViewData["NutritionData"] = recipe.Nutrition;
-            if (recipe == null)
-            {
-                return NotFound();
-            }
-            ViewData["CategoryId"] = new SelectList(_context.Categories, "CategoryId", "CategoryName", recipe.CategoryId);
-            ViewData["CuisineId"] = new SelectList(_context.Cuisines, "CuisineId", "CuisineName", recipe.CuisineId);
-            ViewData["UserId"] = new SelectList(_context.AspNetUsers, "Id", "Id", recipe.UserId);
-
-
-            recipe.Views++;
-
-            // Attach the recipe entity and mark only the Views property as modified
-            _context.Recipes.Attach(recipe);
-            _context.Entry(recipe).Property(r => r.Views).IsModified = true;
-
-            // Save the updated views count
-            await _context.SaveChangesAsync();
-
-
-            return View(recipe);
-        }
+       
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
